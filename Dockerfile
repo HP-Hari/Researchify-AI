@@ -48,6 +48,7 @@ COPY --from=builder /app/package-lock.json ./package-lock.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/server.js ./server.js
 COPY --from=builder /app/src/server.ts ./src/server.ts
 
 # Set correct file ownership
