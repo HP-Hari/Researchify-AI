@@ -59,10 +59,10 @@ A high-signal briefing synthesizing the empirical evidence in 1–2 dense analyt
 ### 2. Chronological Evolution & Timeline (2022–2026)
 A structured chronological breakdown (markdown table) detailing key inflection points, breakthroughs, policy shifts, or market failures year-by-year leading up to 2026.
 
-### 3. Adversarial "Red Team" Analysis
-* **The Bull / Established Case:** The strongest corroborated arguments, verified metrics, and official claims supporting the thesis.
-* **The Bear / Counter-Thesis & Failure Modes:** Skeptical counter-evidence, hidden friction points, commercial or methodological bottlenecks, and data that contradicts mainstream optimism.
-* **Analyst Risk Verdict:** Unvarnished evaluation of whether the bull or bear thesis holds greater empirical weight.
+### 3. Verdict Analysis (Bull Case vs. Bear Case)
+* **Supporting Arguments (The Bull Case):** The strongest corroborated data, verified performance benchmarks, and official evidence supporting the opportunity.
+* **Counter-Evidence & Critical Risks (The Bear Case):** Unvarnished counter-evidence, hidden friction points, cost/scaling bottlenecks, and empirical data challenging the thesis.
+* **Decisive Risk Verdict:** Definitive analytical evaluation weighing which case holds greater empirical validity.
 
 ### 4. Deep-Dive Findings by Sub-Question
 Detailed analytical breakdown addressing each research sub-question. Every factual metric and empirical claim MUST end with a bracketed citation marker like [1], [2] linked to the Sources section.

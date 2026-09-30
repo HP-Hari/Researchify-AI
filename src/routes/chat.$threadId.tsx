@@ -3,6 +3,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { ChatWindow } from "@/components/research/ChatWindow";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import agentMark from "@/assets/agent-mark.png";
 import {
   deleteThread,
@@ -108,6 +109,13 @@ function ChatPage() {
             </div>
           ))}
         </div>
+
+        <div className="border-t border-border/60 bg-sidebar/50 p-3 flex items-center justify-between">
+          <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+            Appearance
+          </span>
+          <ThemeToggle showLabel />
+        </div>
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col">
@@ -116,13 +124,16 @@ function ChatPage() {
             <img src={agentMark} alt="" width={816} height={816} className="size-6" />
             <span className="font-display text-lg leading-none font-semibold">Researchify AI</span>
           </div>
-          <button
-            type="button"
-            onClick={startNew}
-            className="rounded-md border border-border px-2.5 py-1.5 text-xs"
-          >
-            New
-          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={startNew}
+              className="rounded-md border border-border px-2.5 py-1.5 text-xs font-medium"
+            >
+              New
+            </button>
+          </div>
         </header>
 
         {ready ? (

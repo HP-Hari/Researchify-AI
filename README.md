@@ -1,13 +1,13 @@
 # Researchify AI
 
 > **Enterprise-Grade Autonomous Research Intelligence Engine**  
-> Uncompromising multi-perspective strategic intelligence with adversarial Red Team challenge, chronological evolution timeline, and dynamic branching neural evidence topology.
+> Uncompromising multi-perspective strategic intelligence with direct Verdict Analysis (Bull Case vs. Bear Case), chronological evolution timeline, dark/light mode customization, and dynamic branching neural evidence topology.
 
 ---
 
 ## ⚡ Overview
 
-Most AI research tools generate superficial summaries that fail to stress-test claims or take a decisive stance. **Researchify AI** is built differently: it operates as an autonomous research intelligence analyst that decomposes complex inquiries, scours the live web across multiple angles, subjects prevailing consensus to adversarial "Red Team" scrutiny, and delivers an unvarnished executive verdict.
+Most AI research tools generate superficial summaries that fail to stress-test claims or take a decisive stance. **Researchify AI** is built differently: it operates as an autonomous research intelligence analyst that decomposes complex inquiries, scours the live web across multiple angles, subjects prevailing consensus to rigorous "Verdict Analysis" (Bull Case vs. Bear Case), and delivers an unvarnished executive verdict.
 
 ---
 
@@ -20,11 +20,11 @@ Most AI research tools generate superficial summaries that fail to stress-test c
 * **Verified Leaf Citations:** Clickable source cards with site hostnames, verified badges, and interactive popover excerpt previews.
 * **Dual Visualization Modes:** Switch seamlessly between **Neural Tree** graph view and structured **Evidence Matrix** view.
 
-### 2. 🛡️ Adversarial "Red Team" Challenge
-Every dossier stress-tests conventional wisdom:
-* **The Bull / Established Case:** Verified metrics, official claims, and the strongest supporting data.
-* **The Bear / Counter-Evidence:** Skeptical counter-theses, hidden failure modes, engineering/commercial bottlenecks, and supply chain friction.
-* **Analyst Risk Verdict:** Unbiased determination of which argument holds superior empirical weight.
+### 2. ⚖️ Verdict Analysis (Bull Case vs. Bear Case)
+Every dossier provides an unhedged, direct analytical evaluation:
+* **Supporting Arguments (The Bull Case):** Verified metrics, official claims, and the strongest corroborated data.
+* **Counter-Evidence & Critical Risks (The Bear Case):** Unvarnished counter-theses, hidden failure modes, engineering/commercial bottlenecks, and supply chain friction.
+* **Decisive Risk Verdict:** Definitive analytical evaluation determining which argument holds superior empirical weight.
 
 ### 3. ⏳ Chronological Evolution Timeline (2022–2026)
 * Formats historical trajectory tables mapping inflection points, technological milestones, and policy shifts leading up to 2026.
@@ -41,6 +41,10 @@ Every dossier stress-tests conventional wisdom:
 
 ### 6. 🌐 Autonomous Live Web Harvester
 * Direct, resilient HTML scraping pipeline with Cheerio and URL unquoting, returning verified live search hits without requiring paid third-party search APIs.
+
+### 7. 🌓 Dark / Light Mode Options
+* Built-in instant theme switcher (`Light`, `Dark`, and `System` preference).
+* High-contrast, tuned HSL semantic palette across both light and dark aesthetics with anti-FOUC state persistence.
 
 ---
 
@@ -69,7 +73,7 @@ flowchart TD
     subgraph DossierSynthesis [Enterprise Report Synthesis]
         M1 & M2 & M3 --> ExecVerdict[Upfront Executive Verdict Box]
         M1 & M2 & M3 --> Timeline[Chronological Timeline 2022-2026]
-        M1 & M2 & M3 --> RedTeam[Adversarial Red Team Bull/Bear]
+        M1 & M2 & M3 --> VerdictAnalysis[Verdict Analysis Bull/Bear]
         M1 & M2 & M3 --> FinalDecision[Actionable Decision Framework]
     end
 

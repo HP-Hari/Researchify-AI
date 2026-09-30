@@ -1,7 +1,7 @@
 {
   "name": "researchify-ai",
   "version": "1.0.0",
-  "description": "Enterprise-grade autonomous research intelligence engine with adversarial Red Team challenge, chronological evolution timeline, and animated branching knowledge tree.",
+  "description": "Enterprise-grade autonomous research intelligence engine with Verdict Analysis (Bull Case vs. Bear Case), chronological evolution timeline, dark/light theme switching, and animated branching knowledge tree.",
   "license": "MIT",
   "private": true,
   "sideEffects": false,

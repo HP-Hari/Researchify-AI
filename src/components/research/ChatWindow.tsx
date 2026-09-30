@@ -1,6 +1,6 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { Globe, FileText, Play, ArrowRight, Sparkles, ShieldAlert } from "lucide-react";
+import { Globe, FileText, Play, ArrowRight, Sparkles, ShieldCheck } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -220,13 +220,13 @@ export function ChatWindow({
                       type="button"
                       onClick={() =>
                         submit(
-                          "Expand and deepen the adversarial Red Team counter-arguments with more contradictory evidence."
+                          "Expand and deepen the Verdict Analysis with additional counter-evidence, risk factors, and benchmarks."
                         )
                       }
                       className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card/60 px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-accent hover:text-accent"
                     >
-                      <ShieldAlert className="size-3" />
-                      Deepen Red Team Critique
+                      <ShieldCheck className="size-3" />
+                      Deepen Verdict Analysis
                     </button>
                     <button
                       type="button"
