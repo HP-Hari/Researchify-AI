@@ -73,13 +73,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Cortex — Autonomous Research Agent" },
+      { title: "Researchify AI — Autonomous Research Agent" },
       {
         name: "description",
         content:
           "Ask an open-ended question and get a sourced research report built from live web sources.",
       },
-      { property: "og:title", content: "Cortex — Autonomous Research Agent" },
+      { property: "og:title", content: "Researchify AI — Autonomous Research Agent" },
       {
         property: "og:description",
         content:

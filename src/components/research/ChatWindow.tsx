@@ -87,7 +87,7 @@ export function ChatWindow({
               <div className="space-y-2">
                 <h1 className="text-4xl">Ask a hard question.</h1>
                 <p className="max-w-md text-sm text-muted-foreground">
-                  Cortex splits it into research tasks, reads multiple live sources, compares what they
+                  Researchify AI splits it into research tasks, reads multiple live sources, compares what they
                   say, and writes a report you can check line by line.
                 </p>
               </div>

@@ -7,7 +7,8 @@ export type ResearchThread = {
   messages: UIMessage[];
 };
 
-const STORAGE_KEY = "cortex.research.threads.v1";
+const STORAGE_KEY = "researchify.ai.threads.v1";
+const LEGACY_STORAGE_KEY = "cortex.research.threads.v1";
 
 export function newThreadId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
@@ -17,7 +18,7 @@ export function newThreadId() {
 export function loadThreads(): ResearchThread[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as ResearchThread[];
     if (!Array.isArray(parsed)) return [];

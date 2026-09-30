@@ -7,17 +7,17 @@ import { loadThreads, newThreadId } from "@/lib/threads";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Cortex — Autonomous Research Agent" },
+      { title: "Researchify AI — Autonomous Research Agent" },
       {
         name: "description",
         content:
-          "Ask an open-ended question. Cortex breaks it into research tasks, compares live sources, and writes a cited report.",
+          "Ask an open-ended question. Researchify AI breaks it into research tasks, compares live sources, and writes a cited report.",
       },
-      { property: "og:title", content: "Cortex — Autonomous Research Agent" },
+      { property: "og:title", content: "Researchify AI — Autonomous Research Agent" },
       {
         property: "og:description",
         content:
-          "Ask an open-ended question. Cortex breaks it into research tasks, compares live sources, and writes a cited report.",
+          "Ask an open-ended question. Researchify AI breaks it into research tasks, compares live sources, and writes a cited report.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -40,7 +40,7 @@ function Index() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-4 text-center">
         <img src={agentMark} alt="" width={816} height={816} className="size-14 animate-pulse" />
-        <p className="font-display text-2xl">Cortex</p>
+        <p className="font-display text-2xl">Researchify AI</p>
       </div>
     </div>
   );

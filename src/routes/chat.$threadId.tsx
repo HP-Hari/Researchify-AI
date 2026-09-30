@@ -15,12 +15,12 @@ import {
 export const Route = createFileRoute("/chat/$threadId")({
   head: () => ({
     meta: [
-      { title: "Research session — Cortex" },
+      { title: "Research session — Researchify AI" },
       {
         name: "description",
         content: "An open research session: sub-tasks, live sources, and a cited report.",
       },
-      { property: "og:title", content: "Research session — Cortex" },
+      { property: "og:title", content: "Research session — Researchify AI" },
       {
         property: "og:description",
         content: "An open research session: sub-tasks, live sources, and a cited report.",
@@ -67,7 +67,7 @@ function ChatPage() {
       <aside className="hidden w-72 shrink-0 flex-col border-r border-border bg-sidebar md:flex">
         <Link to="/" className="flex items-center gap-2.5 px-4 py-4">
           <img src={agentMark} alt="" width={816} height={816} className="size-7" />
-          <span className="font-display text-xl leading-none">Cortex</span>
+          <span className="font-display text-xl leading-none font-semibold">Researchify AI</span>
         </Link>
 
         <button
@@ -114,7 +114,7 @@ function ChatPage() {
         <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 md:hidden">
           <div className="flex items-center gap-2">
             <img src={agentMark} alt="" width={816} height={816} className="size-6" />
-            <span className="font-display text-lg leading-none">Cortex</span>
+            <span className="font-display text-lg leading-none font-semibold">Researchify AI</span>
           </div>
           <button
             type="button"

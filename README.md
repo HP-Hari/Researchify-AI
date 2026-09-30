@@ -1,4 +1,4 @@
-# Researchify AI (Cortex)
+# Researchify AI
 
 > **Enterprise-Grade Autonomous Research Intelligence Engine**  
 > Uncompromising multi-perspective strategic intelligence with adversarial Red Team challenge, chronological evolution timeline, and dynamic branching neural evidence topology.
