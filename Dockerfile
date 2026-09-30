@@ -61,4 +61,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:${PORT:-8080}/ || exit 1
 
 # Start the TanStack Start production server
-CMD ["sh", "-c", "npm run preview -- --host 0.0.0.0 --port ${PORT:-8080}"]
+CMD ["npm", "start"]
