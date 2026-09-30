@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && npx nitro build",
+    "build": "vite build && npx nitro build && cp -r dist/client/* .output/public/",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
