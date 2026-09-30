@@ -9,6 +9,8 @@ dist-ssr/
 .vinxi/
 .tanstack/
 .nitro/
+.netlify/
+.vercel/
 coverage/
 
 # Logs
