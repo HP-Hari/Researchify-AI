@@ -49,6 +49,19 @@ export default {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
+
+      // If a GET request to a UI page route (not /api/*) returned 404, fallback to root app shell
+      if (response.status === 404 && request.method === "GET") {
+        const url = new URL(request.url);
+        if (!url.pathname.startsWith("/api/")) {
+          const rootRequest = new Request(new URL("/", request.url).toString(), request);
+          const rootResponse = await handler.fetch(rootRequest, env, ctx);
+          if (rootResponse.status < 400) {
+            return rootResponse;
+          }
+        }
+      }
+
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
