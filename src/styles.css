@@ -260,5 +260,58 @@ blockquote strong {
   font-weight: 700;
 }
 
+/* Print and PDF Export Optimization */
+@media print {
+  aside,
+  header,
+  nav,
+  .no-print,
+  button,
+  form,
+  input,
+  textarea {
+    display: none !important;
+  }
+
+  body,
+  html {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10.5pt !important;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .prose blockquote,
+  blockquote {
+    border-left: 4px solid #0f766e !important;
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  table {
+    break-inside: avoid;
+    width: 100% !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  th {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+  }
+
+  h1, h2, h3, h4 {
+    break-after: avoid;
+    color: #0f172a !important;
+  }
+}
+
 
 

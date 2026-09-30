@@ -31,13 +31,14 @@ Every dossier provides an unhedged, direct analytical evaluation:
 
 ### 4. 🎯 Upfront Executive Verdict & Concluding Decision Framework
 * **Direct Answer First:** Unambiguous 1–2 sentence direct answer (YES / NO / Conditional Threshold) right below the title.
-* **Strategic Stance & Confidence Index:** Quantified confidence score (e.g. `88/100`) and strategic posture.
+* **Strategic Stance & Dynamic Confidence Index:** Fact-derived, authentic confidence score with an empirical rationale, strictly avoiding canned or repeated default numbers.
 * **Primary Deciding Factor:** Identifies the single make-or-break variable that dictates the outcome.
 * **Final Actionable Decision Framework:** Finishes with an unhedged Bottom Line, key empirical metrics to watch, and 3 prioritized next steps.
+* **Related Research Inquiries:** Generates 3 contextual, high-impact follow-up questions tailored specifically to the research topic.
 
 ### 5. ⚡ Zero-Quota Drop Circuit Breaker
-* Dynamic in-memory load distribution across independent free-tier Google Gemini models (`gemini-3.6-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`).
-* Automatic 60-second cooldown isolation on rate-limit detection prevents user-facing 429 crashes.
+* Dynamic in-memory load distribution across independent, verified Google Gemini models (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3-flash-preview`).
+* Automatic multi-minute cooldown isolation on rate-limit detection prevents user-facing 429 crashes.
 
 ### 6. 🌐 Autonomous Live Web Harvester
 * Direct, resilient HTML scraping pipeline with Cheerio and URL unquoting, returning verified live search hits without requiring paid third-party search APIs.

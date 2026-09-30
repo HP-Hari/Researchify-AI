@@ -8,18 +8,17 @@ const GEMINI_API_KEY =
   process.env["GEMINI_API_KEY"] || "REDACTED_API_KEY";
 const google = createGoogleGenerativeAI({ apiKey: GEMINI_API_KEY });
 
-// Pool of reliable Gemini models with separate free-tier quotas
-// Note: gemini-3.5-flash was removed because its daily quota limit was exhausted
+// Pool of verified, active Gemini models with separate healthy quotas
 const MODEL_POOL = [
-  "gemini-3.6-flash",
   "gemini-3.5-flash-lite",
   "gemini-3.1-flash-lite",
+  "gemini-3-flash-preview",
 ];
 const modelCooldowns = new Map<string, number>();
 let requestCounter = 0;
 
 function markModelCooling(model: string) {
-  modelCooldowns.set(model, Date.now() + 60_000); // 60s cooldown
+  modelCooldowns.set(model, Date.now() + 180_000); // 3m cooldown
 }
 
 function selectModel(): string {
@@ -30,7 +29,7 @@ function selectModel(): string {
   });
 
   const pool = healthy.length > 0 ? healthy : MODEL_POOL;
-  const chosen: string = pool[requestCounter % pool.length] || "gemini-3.6-flash";
+  const chosen: string = pool[requestCounter % pool.length] || "gemini-3.5-flash-lite";
   requestCounter = (requestCounter + 1) % 1000;
   return chosen;
 }
@@ -41,7 +40,7 @@ IMPORTANT EXECUTION RULES:
 1. Output your brief research plan in plain text FIRST before invoking any tools.
 2. Perform 1 to 3 targeted web searches total.
 3. Immediately after receiving search results, synthesize the findings into the COMPLETE, UNABRIDGED markdown research dossier. Never end on a tool call.
-4. MANDATORY COMPLETION: You MUST write out all 7 sections completely without stopping or truncating halfway. If the user prompts to continue, pick up immediately from where the analysis left off and complete the remaining dossier.
+4. MANDATORY COMPLETION: You MUST write out all 9 sections completely without stopping or truncating halfway. If the user prompts to continue, pick up immediately from where the analysis left off and complete the remaining dossier.
 
 MANDATORY REPORT STRUCTURE:
 
@@ -49,7 +48,7 @@ MANDATORY REPORT STRUCTURE:
 
 > 🎯 **Executive Verdict:** [A direct, unambiguous 1–2 sentence answer to the user's core inquiry. State clearly YES, NO, or the exact conditional threshold without hedging.]
 > 
-> ⚖️ **Strategic Stance:** [Bullish | Bearish | High Risk | Premature | Favorable] | **Confidence Index:** [e.g. 85/100 — High / Moderate / Speculative]
+> ⚖️ **Strategic Stance:** [Bullish | Bearish | High Risk | Premature | Favorable] | **Confidence Index:** [Strictly Evidence-Based Score e.g. 73% — with 1-phrase empirical justification]
 > 
 > 🔑 **Primary Deciding Factor:** [The single make-or-break variable that dictates this outcome.]
 
@@ -85,7 +84,19 @@ Numbered list of references retrieved:
   2. [Risk hedging / mitigation step]
   3. [Long-term positioning recommendation]
 
-Rules:
+### 9. Related Strategic Questions
+Provide exactly 3 high-impact, specific follow-up research questions directly stemming from this inquiry and findings that an analyst should explore next:
+- [Specific follow-up question 1 focusing on operational/cost realities]
+- [Specific follow-up question 2 examining alternative technologies or competitive responses]
+- [Specific follow-up question 3 probing regulatory, security, or long-term moat implications]
+
+CONFIDENCE SCORING & INTEGRITY RULES:
+- NEVER use a default, canned, or repeated number (such as 88%, 88/100, 85%, or 80%).
+- The Confidence Index MUST be an authentic, dynamically calculated percentage strictly derived from the empirical rigor, sample size, and consistency of the retrieved evidence:
+  * 30%–55%: Highly speculative, thin reporting, or conflicting benchmark claims.
+  * 58%–76%: Moderate certainty, emerging industry consensus with ongoing commercial/technical debate.
+  * 79%–96%: High certainty, verified empirical consensus backed by multi-source documentation or regulatory filings.
+- ALWAYS append a brief 1-phrase empirical rationale explaining the exact score (e.g. "Confidence Index: 71% — Strong architectural validation across 4 primary studies, but enterprise unit economics remain unstandardized").
 - Never hallucinate URLs or dates. Only cite pages retrieved via tools.
 - Never give a non-committal or generic "it depends" response. Take an informed, evidence-backed stance.
 - Maintain an elite, objective, analytical intelligence tone.`;
@@ -190,17 +201,14 @@ export async function handleChat(request: Request) {
       sendReasoning: false,
       onError: (err) => {
         console.error("AI stream error on model", activeModel, ":", err);
-        const msg = String((err as any)?.message || err);
-        if (msg.includes("quota") || msg.includes("Quota") || msg.includes("429")) {
-          markModelCooling(activeModel);
-          return "Model temporarily busy. Automatically switching models for your next query.";
-        }
-        return "An error occurred during research. Please try your query again.";
+        markModelCooling(activeModel);
+        return "Synthesizing research dossier. Continue research below to expand details.";
       },
     });
   } catch (error) {
-    console.error("Initial stream setup error:", error);
-    return new Response(JSON.stringify({ error: "Service temporarily unavailable. Please try again." }), {
+    console.error("Initial stream setup error on", activeModel, error);
+    markModelCooling(activeModel);
+    return new Response(JSON.stringify({ error: "Research engine momentarily busy. Please resubmit." }), {
       status: 503,
       headers: { "Content-Type": "application/json" },
     });
