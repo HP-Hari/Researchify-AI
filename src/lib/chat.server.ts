@@ -4,11 +4,18 @@ import { z } from "zod";
 
 import { readPage, searchWeb } from "./firecrawl.server";
 
-const GEMINI_API_KEY = process.env["GEMINI_API_KEY"] || "";
-if (!GEMINI_API_KEY) {
-  console.warn("[Researchify AI] GEMINI_API_KEY is not set. LLM inference will fail.");
+function getGoogleProvider() {
+  const rawKey = process.env["GEMINI_API_KEY"] || "";
+  const keys = rawKey.split(",").map((k) => k.trim()).filter(Boolean);
+  if (keys.length === 0) {
+    console.warn("[Researchify AI] GEMINI_API_KEY is not set. LLM inference will fail.");
+    return createGoogleGenerativeAI({ apiKey: "" });
+  }
+  // Load-balance across multiple keys if provided
+  const selectedKey = keys[Math.floor(Math.random() * keys.length)];
+  return createGoogleGenerativeAI({ apiKey: selectedKey });
 }
-const google = createGoogleGenerativeAI({ apiKey: GEMINI_API_KEY });
+
 
 // Pool of verified, active Gemini models with separate healthy quotas
 const MODEL_POOL = [
@@ -189,8 +196,9 @@ export async function handleChat(request: Request) {
   const activeModel = selectModel();
   try {
     const modelMessages = await convertToModelMessages(safeMessages);
+    const googleProvider = getGoogleProvider();
     const result = streamText({
-      model: google(activeModel),
+      model: googleProvider(activeModel),
       system: SYSTEM_PROMPT,
       messages: modelMessages,
       tools,
