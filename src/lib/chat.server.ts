@@ -19,9 +19,9 @@ function getGoogleProvider() {
 
 // Pool of verified, active Gemini models with separate healthy quotas
 const MODEL_POOL = [
-  "gemini-3.5-flash-lite",
-  "gemini-3.1-flash-lite",
-  "gemini-3-flash-preview",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-1.5-pro",
 ];
 const modelCooldowns = new Map<string, number>();
 let requestCounter = 0;
@@ -38,7 +38,7 @@ function selectModel(): string {
   });
 
   const pool = healthy.length > 0 ? healthy : MODEL_POOL;
-  const chosen: string = pool[requestCounter % pool.length] || "gemini-3.5-flash-lite";
+  const chosen: string = pool[requestCounter % pool.length] || "gemini-2.0-flash";
   requestCounter = (requestCounter + 1) % 1000;
   return chosen;
 }
@@ -212,7 +212,8 @@ export async function handleChat(request: Request) {
       onError: (err) => {
         console.error("AI stream error on model", activeModel, ":", err);
         markModelCooling(activeModel);
-        return "Synthesizing research dossier. Continue research below to expand details.";
+        const msg = err instanceof Error ? err.message : String(err);
+        return `⚠️ Research Error (${activeModel}): ${msg}`;
       },
     });
   } catch (error) {
