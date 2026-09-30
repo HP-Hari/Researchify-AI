@@ -122,8 +122,8 @@ Built-in theme switcher with `Light`, `Dark`, and `System` modes. Uses oklch col
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/your-username/researchify-ai.git
-cd researchify-ai
+git clone https://github.com/HP-Hari/Researchify-AI.git
+cd Researchify-AI
 npm install
 ```
 

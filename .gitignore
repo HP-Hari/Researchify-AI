@@ -33,6 +33,7 @@ lerna-debug.log*
 .DS_Store
 Thumbs.db
 .lovable/
+.antigravity/
 
 # IDE & Editor files
 .vscode/*
