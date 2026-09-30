@@ -5,7 +5,7 @@ import { z } from "zod";
 import { readPage, searchWeb } from "./firecrawl.server";
 
 const GEMINI_API_KEY =
-  process.env.GEMINI_API_KEY || "REDACTED_API_KEY";
+  process.env["GEMINI_API_KEY"] || "REDACTED_API_KEY";
 const google = createGoogleGenerativeAI({ apiKey: GEMINI_API_KEY });
 
 // Pool of reliable Gemini models with separate free-tier quotas
