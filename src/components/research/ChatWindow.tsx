@@ -383,8 +383,8 @@ export function ChatWindow({
             />
             <PromptInputFooter className="justify-between">
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <FileText className="size-3.5" />
-                Every claim gets a numbered source
+                <ShieldCheck className="size-3.5" />
+                Evidence-backed research intelligence
               </span>
               <PromptInputSubmit
                 status={status}

@@ -4,8 +4,10 @@ import { z } from "zod";
 
 import { readPage, searchWeb } from "./firecrawl.server";
 
-const GEMINI_API_KEY =
-  process.env["GEMINI_API_KEY"] || "REDACTED_API_KEY";
+const GEMINI_API_KEY = process.env["GEMINI_API_KEY"] || "";
+if (!GEMINI_API_KEY) {
+  console.warn("[Researchify AI] GEMINI_API_KEY is not set. LLM inference will fail.");
+}
 const google = createGoogleGenerativeAI({ apiKey: GEMINI_API_KEY });
 
 // Pool of verified, active Gemini models with separate healthy quotas
@@ -64,7 +66,7 @@ A structured chronological breakdown (markdown table) detailing key inflection p
 * **Decisive Risk Verdict:** Definitive analytical evaluation weighing which case holds greater empirical validity.
 
 ### 4. Deep-Dive Findings by Sub-Question
-Detailed analytical breakdown addressing each research sub-question. Every factual metric and empirical claim MUST end with a bracketed citation marker like [1], [2] linked to the Sources section.
+Detailed analytical breakdown addressing each research sub-question with concrete evidence from the retrieved sources.
 
 ### 5. Where Sources Disagree & Contradictions
 Explicitly identify points where industry reports, academic research, and official filings conflict, and explain why.

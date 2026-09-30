@@ -260,8 +260,14 @@ blockquote strong {
   font-weight: 700;
 }
 
-/* Print and PDF Export Optimization */
+/* Print and PDF Export Optimization — Full Multi-Page Support */
+@page {
+  size: A4;
+  margin: 18mm 15mm 18mm 15mm;
+}
+
 @media print {
+  /* Hide non-content elements */
   aside,
   header,
   nav,
@@ -269,8 +275,21 @@ blockquote strong {
   button,
   form,
   input,
-  textarea {
+  textarea,
+  [data-radix-scroll-area-viewport],
+  .scrollbar-none {
     display: none !important;
+  }
+
+  /* Reset all overflow/height clipping so content flows across pages */
+  *,
+  *::before,
+  *::after {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
 
   body,
@@ -278,26 +297,54 @@ blockquote strong {
     background: #ffffff !important;
     color: #0f172a !important;
     font-size: 10.5pt !important;
+    height: auto !important;
+    overflow: visible !important;
+    width: 100% !important;
   }
 
-  main {
-    width: 100% !important;
-    max-width: 100% !important;
+  body {
     margin: 0 !important;
     padding: 0 !important;
   }
 
+  main,
+  [role="main"],
+  .flex-1,
+  .flex-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    height: auto !important;
+  }
+
+  /* Ensure message container doesn't clip */
+  [class*="ConversationContent"],
+  [class*="conversation"],
+  [class*="MessageContent"],
+  [class*="max-w-3xl"] {
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Page break control */
   .prose blockquote,
   blockquote {
     border-left: 4px solid #0f766e !important;
     background: #f8fafc !important;
     border: 1px solid #cbd5e1 !important;
     break-inside: avoid;
+    page-break-inside: avoid;
     box-shadow: none !important;
   }
 
   table {
     break-inside: avoid;
+    page-break-inside: avoid;
     width: 100% !important;
     border: 1px solid #cbd5e1 !important;
   }
@@ -309,9 +356,33 @@ blockquote strong {
 
   h1, h2, h3, h4 {
     break-after: avoid;
+    page-break-after: avoid;
     color: #0f172a !important;
   }
+
+  /* Prevent orphan paragraphs */
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Images should not break across pages */
+  img, svg, figure {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Links show URL in print */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #64748b;
+    word-break: break-all;
+  }
+
+  /* Hide branching graph SVG animations in print */
+  svg animate {
+    display: none !important;
+  }
 }
-
-
 

@@ -63,11 +63,23 @@ export async function searchWeb(
       }
 
       if (title && cleanUrl) {
-        results.push({
-          title,
-          url: cleanUrl,
-          snippet: snippet || title,
-        });
+        // Final validation: only accept proper http(s) URLs, skip DuckDuckGo internal links
+        cleanUrl = cleanUrl.trim();
+        try {
+          const validated = new URL(cleanUrl);
+          if (
+            (validated.protocol === "http:" || validated.protocol === "https:") &&
+            !validated.hostname.includes("duckduckgo.com")
+          ) {
+            results.push({
+              title,
+              url: cleanUrl,
+              snippet: snippet || title,
+            });
+          }
+        } catch {
+          // Skip invalid URLs entirely
+        }
       }
     });
 

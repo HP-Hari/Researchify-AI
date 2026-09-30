@@ -63,11 +63,21 @@ export function BranchingInvestigationGraph({
         const cleaned = s.query.replace(/^(search for|find|lookup|status of|current status of)\s+/i, "");
         title = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
       }
+      // Filter out sources without valid http(s) URLs to prevent fake/invalid sources
+      const validSources = (s.results || []).filter((src) => {
+        if (!src.url || typeof src.url !== "string") return false;
+        try {
+          const parsed = new URL(src.url);
+          return parsed.protocol === "http:" || parsed.protocol === "https:";
+        } catch {
+          return false;
+        }
+      });
       return {
         id: `branch-${idx}`,
         title,
         query: s.query || "",
-        sources: s.results || [],
+        sources: validSources,
       };
     });
   }, [searches]);
@@ -166,7 +176,7 @@ export function BranchingInvestigationGraph({
               ) : (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-600 ring-1 ring-emerald-500/20 dark:text-emerald-400">
                   <CheckCircle2 className="size-3" />
-                  {branches.length} Investigation {branches.length === 1 ? "Branch" : "Branches"} • {totalSources} Sources Verified
+                  {branches.length} Investigation {branches.length === 1 ? "Branch" : "Branches"} • {totalSources} Sources Found
                 </span>
               )}
             </div>
@@ -376,7 +386,7 @@ export function BranchingInvestigationGraph({
                           <div className="mt-3.5 border-t border-border/50 pt-2.5">
                             <div className="mb-2 flex items-center justify-between text-[10px]">
                               <span className="font-semibold uppercase tracking-wider text-muted-foreground">
-                                Verified Leaf Citations
+                                Discovered Sources
                               </span>
                               <span className="font-mono text-muted-foreground">
                                 {branch.sources.length} {branch.sources.length === 1 ? "source" : "sources"}
