@@ -1,46 +1,50 @@
+import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { convertToModelMessages, isStepCount, streamText, tool, type UIMessage } from "ai";
-import { z } from "zod";
+import { createOpenAI } from "@ai-sdk/openai";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 
-import { readPage, searchWeb } from "./firecrawl.server";
-
-function getGoogleProvider() {
-  const rawKey = process.env["GEMINI_API_KEY"] || "";
-  const keys = rawKey.split(",").map((k) => k.trim()).filter(Boolean);
-  if (keys.length === 0) {
-    console.warn("[Researchify AI] GEMINI_API_KEY is not set. LLM inference will fail.");
-    return createGoogleGenerativeAI({ apiKey: "" });
+function getLLMModel() {
+  const geminiKeys = (process.env["GEMINI_API_KEY"] || "")
+    .split(",")
+    .map((k) => k.trim())
+    .filter(Boolean);
+  if (geminiKeys.length > 0) {
+    const selectedKey = geminiKeys[Math.floor(Math.random() * geminiKeys.length)];
+    const google = createGoogleGenerativeAI({ apiKey: selectedKey });
+    return { model: google("gemini-2.0-flash"), name: "gemini-2.0-flash" };
   }
-  // Load-balance across multiple keys if provided
-  const selectedKey = keys[Math.floor(Math.random() * keys.length)];
-  return createGoogleGenerativeAI({ apiKey: selectedKey });
-}
 
+  const openrouterKeys = (process.env["OPENROUTER_API_KEY"] || "")
+    .split(",")
+    .map((k) => k.trim())
+    .filter(Boolean);
+  if (openrouterKeys.length > 0) {
+    const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)];
+    const openrouter = createOpenRouter({ apiKey: selectedKey });
+    return { model: openrouter("google/gemini-2.0-flash-001"), name: "openrouter/gemini-2.0-flash" };
+  }
 
-// Pool of verified, active Gemini models with separate healthy quotas
-const MODEL_POOL = [
-  "gemini-2.0-flash",
-  "gemini-1.5-flash",
-  "gemini-1.5-pro",
-];
-const modelCooldowns = new Map<string, number>();
-let requestCounter = 0;
+  const openaiKeys = (process.env["OPENAI_API_KEY"] || "")
+    .split(",")
+    .map((k) => k.trim())
+    .filter(Boolean);
+  if (openaiKeys.length > 0) {
+    const selectedKey = openaiKeys[Math.floor(Math.random() * openaiKeys.length)];
+    const openai = createOpenAI({ apiKey: selectedKey });
+    return { model: openai("gpt-4o-mini"), name: "gpt-4o-mini" };
+  }
 
-function markModelCooling(model: string) {
-  modelCooldowns.set(model, Date.now() + 180_000); // 3m cooldown
-}
+  const anthropicKeys = (process.env["ANTHROPIC_API_KEY"] || "")
+    .split(",")
+    .map((k) => k.trim())
+    .filter(Boolean);
+  if (anthropicKeys.length > 0) {
+    const selectedKey = anthropicKeys[Math.floor(Math.random() * anthropicKeys.length)];
+    const anthropic = createAnthropic({ apiKey: selectedKey });
+    return { model: anthropic("claude-3-5-haiku-20241022"), name: "claude-3-5-haiku" };
+  }
 
-function selectModel(): string {
-  const now = Date.now();
-  const healthy = MODEL_POOL.filter((m) => {
-    const until = modelCooldowns.get(m) || 0;
-    return now >= until;
-  });
-
-  const pool = healthy.length > 0 ? healthy : MODEL_POOL;
-  const chosen: string = pool[requestCounter % pool.length] || "gemini-2.0-flash";
-  requestCounter = (requestCounter + 1) % 1000;
-  return chosen;
+  return null;
 }
 
 const SYSTEM_PROMPT = `You are Researchify AI, an enterprise-grade autonomous research intelligence engine. Your mission is to provide uncompromising, verified, multi-perspective strategic intelligence reports.
@@ -193,12 +197,20 @@ export async function handleChat(request: Request) {
     }),
   };
 
-  const activeModel = selectModel();
+  const llm = getLLMModel();
+  if (!llm) {
+    return new Response(
+      JSON.stringify({
+        error: "No LLM API Key configured. Please set GEMINI_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY in your environment variables.",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     const modelMessages = await convertToModelMessages(safeMessages);
-    const googleProvider = getGoogleProvider();
     const result = streamText({
-      model: googleProvider(activeModel),
+      model: llm.model,
       system: SYSTEM_PROMPT,
       messages: modelMessages,
       tools,
@@ -210,15 +222,16 @@ export async function handleChat(request: Request) {
     return result.toUIMessageStreamResponse({
       sendReasoning: false,
       onError: (err) => {
-        console.error("AI stream error on model", activeModel, ":", err);
-        markModelCooling(activeModel);
+        console.error("AI stream error on model", llm.name, ":", err);
         const msg = err instanceof Error ? err.message : String(err);
-        return `⚠️ Research Error (${activeModel}): ${msg}`;
+        if (msg.includes("unregistered callers") || msg.includes("API Key") || msg.includes("401") || msg.includes("identity")) {
+          return `⚠️ API Key Error (${llm.name}): The API key set in your environment is invalid or not registered with Google AI Studio. Please replace GEMINI_API_KEY with a valid key starting with 'AIzaSy...' from https://aistudio.google.com/ or set OPENROUTER_API_KEY.`;
+        }
+        return `⚠️ Research Error (${llm.name}): ${msg}`;
       },
     });
   } catch (error) {
-    console.error("Initial stream setup error on", activeModel, error);
-    markModelCooling(activeModel);
+    console.error("Initial stream setup error on", llm.name, error);
     return new Response(JSON.stringify({ error: "Research engine momentarily busy. Please resubmit." }), {
       status: 503,
       headers: { "Content-Type": "application/json" },
