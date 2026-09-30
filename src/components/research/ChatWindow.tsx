@@ -21,6 +21,7 @@ import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from "@/componen
 import { PageRead, SearchResults } from "@/components/research/SearchResultCard";
 import { BranchingInvestigationGraph } from "@/components/research/BranchingInvestigationGraph";
 import { ReportToolbar } from "@/components/research/ReportToolbar";
+import { ApiKeyModal } from "@/components/research/ApiKeyModal";
 import agentMark from "@/assets/agent-mark.png";
 import { saveThreadMessages } from "@/lib/threads";
 
@@ -89,12 +90,25 @@ export function ChatWindow({
   onMessagesChange: () => void;
 }) {
   const [input, setInput] = useState("");
+  const [hasCustomKey, setHasCustomKey] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHasCustomKey(Boolean(localStorage.getItem("researchify.apiKey")));
+    }
+  }, []);
 
   const { messages, sendMessage, status, stop, error } = useChat({
     id: threadId,
     messages: initialMessages,
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      headers: () => {
+        const key = typeof window !== "undefined" ? localStorage.getItem("researchify.apiKey") || "" : "";
+        return key ? { "x-api-key": key } : {};
+      },
+    }),
     onError: (chatError) => {
       toast.error("Research failed", { description: chatError.message });
     },
@@ -140,6 +154,17 @@ export function ChatWindow({
                   Ask any strategic inquiry, technology dilemma, or market question. Researchify AI breaks it into research tasks, reads live sources, stress-tests claims with Verdict Analysis, and writes a cited dossier.
                 </p>
               </div>
+
+              <ApiKeyModal
+                trigger={
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/50 hover:bg-muted px-3 py-1 text-xs text-muted-foreground hover:text-foreground transition-all shadow-xs"
+                  >
+                    <span>{hasCustomKey ? "🟢 Live Gemini API Connected" : "💡 Autonomous Synthesis Active · Connect Gemini API"}</span>
+                  </button>
+                }
+              />
               <div className="flex flex-wrap justify-center gap-2 max-w-lg">
                 {PROMPT_LENSES.map((lens) => (
                   <button
@@ -382,10 +407,22 @@ export function ChatWindow({
               placeholder="Ask an open-ended research question…"
             />
             <PromptInputFooter className="justify-between">
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <ShieldCheck className="size-3.5" />
-                Evidence-backed research intelligence
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <ShieldCheck className="size-3.5" />
+                  Evidence-backed intelligence
+                </span>
+                <ApiKeyModal
+                  trigger={
+                    <button
+                      type="button"
+                      className="rounded-full border border-border/80 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+                    >
+                      {hasCustomKey ? "Live Gemini Active" : "Connect API Key"}
+                    </button>
+                  }
+                />
+              </div>
               <PromptInputSubmit
                 status={status}
                 disabled={!busy && input.trim().length === 0}

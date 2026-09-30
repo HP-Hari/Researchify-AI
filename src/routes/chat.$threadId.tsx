@@ -1,8 +1,9 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, KeyRound } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { ChatWindow } from "@/components/research/ChatWindow";
+import { ApiKeyModal } from "@/components/research/ApiKeyModal";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import agentMark from "@/assets/agent-mark.png";
 import {
@@ -110,11 +111,29 @@ function ChatPage() {
           ))}
         </div>
 
-        <div className="border-t border-border/60 bg-sidebar/50 p-3 flex items-center justify-between">
-          <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-            Appearance
-          </span>
-          <ThemeToggle showLabel />
+        <div className="border-t border-border/60 bg-sidebar/50 p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+              API Key
+            </span>
+            <ApiKeyModal
+              trigger={
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
+                >
+                  <KeyRound className="size-3.5 text-primary" />
+                  <span>Configure</span>
+                </button>
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between pt-1 border-t border-border/40">
+            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+              Appearance
+            </span>
+            <ThemeToggle showLabel />
+          </div>
         </div>
       </aside>
 
@@ -125,6 +144,17 @@ function ChatPage() {
             <span className="font-display text-lg leading-none font-semibold">Researchify AI</span>
           </div>
           <div className="flex items-center gap-2">
+            <ApiKeyModal
+              trigger={
+                <button
+                  type="button"
+                  aria-label="API Key"
+                  className="rounded-md border border-border p-1.5 text-muted-foreground hover:text-foreground"
+                >
+                  <KeyRound className="size-4" />
+                </button>
+              }
+            />
             <ThemeToggle />
             <button
               type="button"
