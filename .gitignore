@@ -32,6 +32,7 @@ lerna-debug.log*
 # System & OS junk
 .DS_Store
 Thumbs.db
+.lovable/
 
 # IDE & Editor files
 .vscode/*
