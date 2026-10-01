@@ -31,7 +31,7 @@ function getLLMModel(request?: Request) {
       }
       if (key.startsWith("sk-or-")) {
         const openrouter = createOpenRouter({ apiKey: key });
-        return { model: openrouter("google/gemini-3.5-flash"), name: "openrouter (user)" };
+        return { model: openrouter("google/gemini-3.5-flash-lite:free"), name: "openrouter (user)" };
       }
       if (key.startsWith("sk-")) {
         const openai = createOpenAI({ apiKey: key });
@@ -59,7 +59,7 @@ function getLLMModel(request?: Request) {
   if (openrouterKeys.length > 0) {
     const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)];
     const openrouter = createOpenRouter({ apiKey: selectedKey });
-    return { model: openrouter("google/gemini-3.5-flash"), name: "openrouter/gemini-3.5-flash" };
+    return { model: openrouter("google/gemini-3.5-flash-lite:free"), name: "openrouter/gemini-3.5-flash-lite:free" };
   }
 
   const openaiKeys = (process.env["OPENAI_API_KEY"] || "")
