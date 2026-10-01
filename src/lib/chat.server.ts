@@ -267,7 +267,15 @@ export async function handleChat(request: Request) {
             const { done, value } = await reader.read();
             if (done) break;
             if (value.type === "error" && !hasEmittedText) {
-              const errorMessage = value.error?.message || String(value.error) || "Unknown error from LLM stream";
+              let errorMessage = "Unknown error from LLM stream";
+              if (value.error) {
+                if (typeof value.error === "string") errorMessage = value.error;
+                else if (value.error instanceof Error) errorMessage = value.error.message;
+                else if (typeof value.error === "object" && (value.error as any).message) errorMessage = (value.error as any).message;
+                else errorMessage = JSON.stringify(value.error);
+              } else {
+                errorMessage = JSON.stringify(value);
+              }
               writer.write({ type: "start" });
               writer.write({ type: "text-start", id: "error" });
               writer.write({ type: "text-delta", id: "error", delta: `Error: ${errorMessage}. Please check your API keys or deployment logs.` });
