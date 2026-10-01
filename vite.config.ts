@@ -15,6 +15,9 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  optimizeDeps: {
+    include: ["react", "react-dom", "recharts"],
+  },
   plugins: [
     tailwindcss(),
     tanstackStart({

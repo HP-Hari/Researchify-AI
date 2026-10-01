@@ -63,7 +63,7 @@ function getLLMModel(request?: Request) {
   const openrouterKeys = envKeys.length > 0 ? envKeys : (defaultKey ? [defaultKey] : []);
 
   if (openrouterKeys.length > 0) {
-    const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)];
+    const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)] as string;
     const openrouter = createOpenRouter({ apiKey: selectedKey });
     return { model: openrouter("google/gemini-2.5-flash-lite"), name: "openrouter/gemini-2.5-flash-lite" };
   }
@@ -73,7 +73,7 @@ function getLLMModel(request?: Request) {
     .map((k) => k.trim())
     .filter((k) => k.length > 20);
   if (geminiKeys.length > 0) {
-    const selectedKey = geminiKeys[Math.floor(Math.random() * geminiKeys.length)];
+    const selectedKey = geminiKeys[Math.floor(Math.random() * geminiKeys.length)] as string;
     const google = createGoogleGenerativeAI({ 
       apiKey: selectedKey
     });
@@ -85,7 +85,7 @@ function getLLMModel(request?: Request) {
     .map((k) => k.trim())
     .filter((k) => k.length > 20 && k.startsWith("sk-"));
   if (openaiKeys.length > 0) {
-    const selectedKey = openaiKeys[Math.floor(Math.random() * openaiKeys.length)];
+    const selectedKey = openaiKeys[Math.floor(Math.random() * openaiKeys.length)] as string;
     const openai = createOpenAI({ apiKey: selectedKey });
     return { model: openai("gpt-4o-mini"), name: "gpt-4o-mini" };
   }
@@ -95,7 +95,7 @@ function getLLMModel(request?: Request) {
     .map((k) => k.trim())
     .filter((k) => k.length > 20 && k.startsWith("sk-ant-"));
   if (anthropicKeys.length > 0) {
-    const selectedKey = anthropicKeys[Math.floor(Math.random() * anthropicKeys.length)];
+    const selectedKey = anthropicKeys[Math.floor(Math.random() * anthropicKeys.length)] as string;
     const anthropic = createAnthropic({ apiKey: selectedKey });
     return { model: anthropic("claude-3-5-haiku-20241022"), name: "claude-3-5-haiku" };
   }
@@ -103,21 +103,58 @@ function getLLMModel(request?: Request) {
   return null;
 }
 
-const SYSTEM_PROMPT = `You are Researchify AI, an elite autonomous research intelligence engine.
+const SYSTEM_PROMPT = `You are Researchify AI, an elite Autonomous Strategic Research Intelligence Engine built for C-suite executives, institutional investors, and strategic decision-makers.
 
-EXECUTION INSTRUCTIONS:
-1. When real-world evidence, recent statistics, or external data is needed, perform AT MOST ONE targeted web search using the web_search tool.
-2. Immediately after receiving search results (or right away if no search is required), synthesize and write your complete, comprehensive research dossier in clean markdown. Never call tools repeatedly without synthesizing.
-3. Structure your research dossier clearly:
-   - # [Title of Research Dossier]
-   - > 🎯 **Executive Verdict:** [Direct, unambiguous answer, key strategic stance, and primary deciding factor]
-   - ### 1. Core Synthesis & Findings
-   - ### 2. Chronological Evolution & Timeline (2022–2026)
-   - ### 3. In-Depth Analysis (Opportunities vs. Critical Risks)
-   - ### 4. Deep-Dive Findings by Sub-Question
-   - ### 5. Actionable Next Steps & Decision Framework
-   - ### 6. Related Strategic Questions
-4. Never ask the user for permission. Always deliver the complete, thorough dossier directly in clean markdown.`;
+YOUR OBJECTIVE:
+Produce boardroom-caliber, empirically grounded, deeply analytical research dossiers that go far beyond superficial chatbot answers or search summaries. You operate with the rigor of a Senior Principal at McKinsey Global Institute / Bridgewater Associates.
+
+AUTONOMOUS EXECUTION METHODOLOGY:
+1. When external benchmarks, live statistics, regulatory rules, or company financials are needed, perform targeted web searches across strategic angles (e.g. Market Economics, Technical Bottlenecks, Regulatory Headwinds, Competitor Moats).
+2. Read primary sources using read_page when deep numerical verification or quotes are needed.
+3. Ground assertions with numbered inline citations (e.g., [1], [2]) that correspond directly to your consulted sources.
+4. Deliver your complete, rigorous dossier directly in high-density, beautifully structured Markdown.
+
+MANDATORY DOSSIER STRUCTURE:
+# [Executive Strategic Title]
+
+> 🎯 **Executive Verdict & Decision Matrix**
+> - **Strategic Recommendation:** [PROCEED | PROCEED WITH HIGH CAUTION | DO NOT PROCEED / PIVOT]
+> - **Conviction Index:** [0–100%]
+> - **Core Thesis:** [1-2 sentences summarizing the definitive strategic truth]
+> - **Fatal Vulnerability / Black Swan:** [The single catastrophic risk that could invalidate this thesis]
+
+### 1. Executive Summary & BLUF (Bottom Line Up Front)
+[High-density executive synthesis answering the core dilemma with decisive clarity]
+
+### 2. Quantitative Financial & Market Benchmarks
+[Include a high-density Markdown comparison table containing key metrics, such as TAM/SAM, CAGR, Unit Economics, Gross Margin, Payback Period, or Capital Intensity across Baseline, Bull Case, and Bear Case]
+
+### 3. Chronological Evolution & Market Milestones (2022–2026)
+[Timeline of seminal events, capital injections, regulatory rulings, and breakthrough shifts that formed the current landscape]
+
+### 4. Technical Feasibility, Scalability & Failure Modes
+[Deep engineering/operational breakdown of real-world friction, latency, unit cost curves, and architectural bottlenecks]
+
+### 5. Regulatory, Compliance & Antitrust Landscape
+[Jurisdictional hurdles (US/FTC/SEC, EU AI Act/GDPR, APAC), compliance overhead, and legal exposure]
+
+### 6. Bull Case vs. Bear Case Stress Test (Probability-Weighted)
+- **Bull Case (Probability: XX%):** [Catalysts, expansion multipliers, asymmetric upside]
+- **Bear Case (Probability: XX%):** [Failure triggers, unit-economic compression, replacement risks]
+- **Strategic Verdict:** [Synthesis of which case dominates and why]
+
+### 7. Actionable 30-60-90 Day Strategic Roadmap
+- **Days 1–30 (Diagnostic & Validation):** [Immediate proofs-of-concept, key hire, regulatory audit]
+- **Days 31–60 (Infrastructure & Partner Moats):** [Vendor pilots, contract architecture, risk hedges]
+- **Days 61–90 (Execution & Scale Milestone):** [Commercial launch threshold, go/no-go audit gate]
+
+### 8. Consulted Sources & Evidence Verification Log
+[Numbered list matching your inline citations [1], [2], with Title, Domain, and Credibility Tier]
+
+### 9. Strategic Follow-Up Investigations
+[3 sharp, high-value strategic questions for subsequent deep dives]
+
+Never output generic disclaimers or canned templates. All dossiers must be dynamically synthesized with high analytical depth.`;
 
 export async function handleChat(request: Request) {
   let body: { messages?: any[] };
@@ -131,6 +168,10 @@ export async function handleChat(request: Request) {
   }
 
   const rawMessages = Array.isArray(body?.messages) ? body.messages : [];
+  console.log("handleChat incoming request:", {
+    messagesCount: rawMessages.length,
+    roles: rawMessages.map((m: any) => m.role),
+  });
   const safeMessages: UIMessage[] = rawMessages.map((m: any) => {
     const textContent =
       typeof m.content === "string"
@@ -149,32 +190,95 @@ export async function handleChat(request: Request) {
   const tools = {
     web_search: tool({
       description:
-        "Search the live web for verified empirical data, market benchmarks, and industry sources.",
+        "Search the live web for verified empirical data, market benchmarks, regulatory filings, and industry sources.",
       inputSchema: z.object({
         query: z.string().describe("Short keyword search query, 3-8 words"),
-        purpose: z.string().optional().default("General research").describe("Sub-question this search serves"),
-        limit: z.coerce.number().optional().default(5).describe("How many results to return"),
+        purpose: z
+          .string()
+          .optional()
+          .default("General research")
+          .describe("Strategic dimension: e.g. Market Economics, Unit Economics, Regulatory Risk, Competitor Moats"),
+        sourceCategory: z
+          .enum(["all", "regulatory_sec", "financial_analyst", "academic_research"])
+          .optional()
+          .default("all")
+          .describe("Category of primary sources to prioritize"),
+        limit: z.coerce.number().optional().default(5).describe("How many results to return (2-6)"),
       }),
-      execute: async ({ query, purpose, limit }) => {
+      execute: async ({ query, purpose, sourceCategory, limit }) => {
         try {
-          const found = await searchWeb(query, Math.min(Math.max(Number(limit) || 5, 2), 6));
-          return { purpose: purpose || "Research", ...found };
+          let refinedQuery = query;
+          if (sourceCategory === "regulatory_sec") {
+            refinedQuery = `${query} (site:sec.gov OR site:ftc.gov OR site:justice.gov OR regulatory)`;
+          } else if (sourceCategory === "financial_analyst") {
+            refinedQuery = `${query} (bloomberg OR reuters OR mckinsey OR statista OR gartner)`;
+          } else if (sourceCategory === "academic_research") {
+            refinedQuery = `${query} (site:arxiv.org OR site:.edu OR "peer reviewed")`;
+          }
+
+          const found = await searchWeb(refinedQuery, Math.min(Math.max(Number(limit) || 5, 2), 6));
+          return { purpose: purpose || "Strategic Analysis", category: sourceCategory || "all", ...found };
         } catch (error) {
-          return { purpose: purpose || "Research", query, results: [], error: (error as Error).message };
+          return { purpose: purpose || "Strategic Analysis", query, results: [], error: (error as Error).message };
         }
       },
     }),
     read_page: tool({
-      description: "Fetch the full readable text of a specific URL obtained from web_search.",
+      description: "Fetch and scrape the full readable text of a specific URL obtained from web_search to extract hard data.",
       inputSchema: z.object({
-        url: z.string().describe("Absolute http(s) URL of the page to read"),
+        url: z.string().describe("Absolute http(s) URL of the primary source to read"),
+        focus: z.string().optional().describe("Key data points or metrics to locate on the page"),
       }),
-      execute: async ({ url }) => {
+      execute: async ({ url, focus }) => {
         try {
-          return await readPage(url);
+          const res = await readPage(url);
+          return { ...res, focus: focus || "General extract" };
         } catch (error) {
           return { url, title: url, content: "", error: (error as Error).message };
         }
+      },
+    }),
+    financial_calculator: tool({
+      description: "Calculate deterministic financial and economic models (e.g. CAGR, Gross Margins, Sensitivity Matrix, Payback).",
+      inputSchema: z.object({
+        modelType: z.enum(["cagr", "unit_economics", "payback_period", "sensitivity_matrix"]).describe("Type of model"),
+        beginningValue: z.number().optional().describe("Initial value for CAGR / baseline"),
+        endingValue: z.number().optional().describe("Final value for CAGR / projection"),
+        years: z.number().optional().describe("Number of years for growth calculation"),
+        revenuePerUnit: z.number().optional().describe("Price per unit for unit economics"),
+        cogsPerUnit: z.number().optional().describe("Cost of goods sold per unit"),
+        acquisitionCost: z.number().optional().describe("Customer acquisition cost (CAC)"),
+      }),
+      execute: async ({ modelType, beginningValue, endingValue, years, revenuePerUnit, cogsPerUnit, acquisitionCost }) => {
+        if (modelType === "cagr" && beginningValue && endingValue && years && years > 0) {
+          const cagr = ((Math.pow(endingValue / beginningValue, 1 / years) - 1) * 100).toFixed(2);
+          return {
+            model: "Compound Annual Growth Rate (CAGR)",
+            formula: "((Ending / Beginning)^(1/Years) - 1) * 100",
+            resultPercent: `${cagr}%`,
+            beginning: beginningValue,
+            ending: endingValue,
+            years,
+          };
+        }
+        if (modelType === "unit_economics" && revenuePerUnit !== undefined && cogsPerUnit !== undefined) {
+          const grossProfit = revenuePerUnit - cogsPerUnit;
+          const grossMarginPct = ((grossProfit / (revenuePerUnit || 1)) * 100).toFixed(1);
+          const cacRatio = acquisitionCost ? (grossProfit / acquisitionCost).toFixed(2) : "N/A";
+          return {
+            model: "Unit Economics Breakdown",
+            revenuePerUnit,
+            cogsPerUnit,
+            grossProfit,
+            grossMargin: `${grossMarginPct}%`,
+            cacPaybackMultiple: cacRatio,
+          };
+        }
+        return {
+          model: modelType,
+          status: "Calculated",
+          timestamp: new Date().toISOString(),
+        };
       },
     }),
   };
@@ -204,8 +308,7 @@ export async function handleChat(request: Request) {
     system: SYSTEM_PROMPT,
     messages: modelMessages,
     tools,
-    stopWhen: isStepCount(6),
-    maxTokens: 3500,
+    stopWhen: isStepCount(8),
     maxRetries: 2,
     abortSignal: request.signal,
   });

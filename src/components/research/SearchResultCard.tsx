@@ -75,3 +75,33 @@ export function PageRead({
     </div>
   );
 }
+
+export function FinancialCalcResult({
+  output,
+}: {
+  output: any;
+}) {
+  if (!output) return null;
+  return (
+    <div className="rounded-lg bg-muted/40 p-3 text-xs space-y-1.5 font-mono">
+      <div className="font-semibold text-foreground text-sm flex items-center justify-between">
+        <span>{output.model || "Deterministic Financial Model"}</span>
+        {output.resultPercent ? (
+          <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+            {output.resultPercent}
+          </span>
+        ) : null}
+      </div>
+      {output.formula ? (
+        <p className="text-muted-foreground">Formula: {output.formula}</p>
+      ) : null}
+      {output.grossMargin ? (
+        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-border/40">
+          <div>Gross Margin: <strong className="text-foreground">{output.grossMargin}</strong></div>
+          <div>Gross Profit: <strong className="text-foreground">${output.grossProfit}</strong></div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
