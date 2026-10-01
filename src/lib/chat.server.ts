@@ -309,6 +309,7 @@ export async function handleChat(request: Request) {
     messages: modelMessages,
     tools,
     stopWhen: isStepCount(8),
+    maxOutputTokens: 4000,
     maxRetries: 2,
     abortSignal: request.signal,
   });
