@@ -79,7 +79,12 @@ export function EvidenceDrawer({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-background/80 backdrop-blur-xs transition-opacity animate-in fade-in">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Grounding and Evidence Drawer"
+      className="fixed inset-0 z-50 flex justify-end bg-background/80 backdrop-blur-xs transition-opacity animate-in fade-in"
+    >
       <div className="relative flex h-full w-full max-w-xl flex-col border-l border-border bg-card shadow-2xl duration-300 animate-in slide-in-from-right">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border/80 px-5 py-4 bg-muted/30">
