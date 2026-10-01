@@ -23,7 +23,7 @@ function getLLMModel(request?: Request) {
       "";
     if (customKey && customKey.trim().length > 15) {
       const key = customKey.trim();
-      if (key.startsWith("AIza")) {
+      if (key.startsWith("AIza") || key.startsWith("AQ.")) {
         const google = createGoogleGenerativeAI({ apiKey: key });
         return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash (user)" };
       }
@@ -41,7 +41,7 @@ function getLLMModel(request?: Request) {
   const geminiKeys = (process.env["GEMINI_API_KEY"] || "")
     .split(",")
     .map((k) => k.trim())
-    .filter((k) => k.length > 20 && k.startsWith("AIza"));
+    .filter((k) => k.length > 20);
   if (geminiKeys.length > 0) {
     const selectedKey = geminiKeys[Math.floor(Math.random() * geminiKeys.length)];
     const google = createGoogleGenerativeAI({ apiKey: selectedKey });
@@ -267,7 +267,12 @@ export async function handleChat(request: Request) {
             const { done, value } = await reader.read();
             if (done) break;
             if (value.type === "error" && !hasEmittedText) {
-              await streamDossierParts(writer, userQuery);
+              const errorMessage = value.error?.message || String(value.error) || "Unknown error from LLM stream";
+              writer.write({ type: "start" });
+              writer.write({ type: "text-start", id: "error" });
+              writer.write({ type: "text-delta", id: "error", delta: `Error: ${errorMessage}. Please check your API keys or deployment logs.` });
+              writer.write({ type: "text-end", id: "error" });
+              writer.write({ type: "finish" });
               return;
             }
             if (value.type === "text-delta" || value.type === "text-start") {
@@ -287,7 +292,7 @@ export async function handleChat(request: Request) {
     return createUIMessageStreamResponse({ stream });
   } catch (error) {
     console.error("Stream initialization error:", error);
-    return generateFallbackDossierStream(userQuery);
+    return generateFallbackDossierStream(userQuery, String(error));
   }
 }
 
@@ -307,10 +312,15 @@ async function streamDossierParts(writer: any, userQuery: string) {
   writer.write({ type: "finish" });
 }
 
-function generateFallbackDossierStream(userQuery: string): Response {
+function generateFallbackDossierStream(userQuery: string, customError?: string): Response {
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      await streamDossierParts(writer, userQuery);
+      writer.write({ type: "start" });
+      writer.write({ type: "text-start", id: "error" });
+      const msg = customError || "Error: No valid API key provided or stream failed to initialize. Please check your .env file or provide a valid key.";
+      writer.write({ type: "text-delta", id: "error", delta: msg });
+      writer.write({ type: "text-end", id: "error" });
+      writer.write({ type: "finish" });
     },
   });
 
