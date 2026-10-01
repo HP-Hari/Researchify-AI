@@ -24,7 +24,10 @@ function getLLMModel(request?: Request) {
     if (customKey && customKey.trim().length > 15) {
       const key = customKey.trim();
       if (key.startsWith("AIza") || key.startsWith("AQ.")) {
-        const google = createGoogleGenerativeAI({ apiKey: key });
+        const google = createGoogleGenerativeAI({ 
+          apiKey: key, 
+          baseURL: "https://generativelanguage.googleapis.com/v1beta" 
+        });
         return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash (user)" };
       }
       if (key.startsWith("sk-or-")) {
@@ -44,7 +47,10 @@ function getLLMModel(request?: Request) {
     .filter((k) => k.length > 20);
   if (geminiKeys.length > 0) {
     const selectedKey = geminiKeys[Math.floor(Math.random() * geminiKeys.length)];
-    const google = createGoogleGenerativeAI({ apiKey: selectedKey });
+    const google = createGoogleGenerativeAI({ 
+      apiKey: selectedKey,
+      baseURL: "https://generativelanguage.googleapis.com/v1beta"
+    });
     return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash" };
   }
 
@@ -273,6 +279,8 @@ export async function handleChat(request: Request) {
                 else if (value.error instanceof Error) errorMessage = value.error.message;
                 else if (typeof value.error === "object" && (value.error as any).message) errorMessage = (value.error as any).message;
                 else errorMessage = JSON.stringify(value.error);
+              } else if (value.errorText) {
+                errorMessage = value.errorText;
               } else {
                 errorMessage = JSON.stringify(value);
               }
