@@ -426,9 +426,9 @@ export function ChatWindow({
                   trigger={
                     <button
                       type="button"
-                      className="rounded-full border border-border/80 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+                      className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 hover:border-emerald-500/50 transition-colors"
                     >
-                      {hasCustomKey ? "Live API Active" : "Connect API Key"}
+                      {hasCustomKey ? "Custom Key Active" : "Live API Active"}
                     </button>
                   }
                 />

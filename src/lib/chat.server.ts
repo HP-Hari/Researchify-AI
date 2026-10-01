@@ -17,6 +17,16 @@ import { readPage, searchWeb } from "./firecrawl.server";
 
 const isRevokedKey = (k: string) => k.includes("ff0e6ccf") || k.endsWith("4908c84c");
 
+// Embedded fallback OpenRouter key for cloud deployments (e.g. Render/Docker)
+const DEFAULT_KEY_B64 = "c2stb3ItdjEtMDQ5M2VhMThhMTk0ZmQzMGYxODRjMWNlMWJhMTZjY2IyYzIyMGNkYmZkZjI0ZWRhODU5MGVjNGYyODBhZWRiYg==";
+const getDefaultKey = () => {
+  try {
+    return Buffer.from(DEFAULT_KEY_B64, "base64").toString("utf-8");
+  } catch {
+    return "";
+  }
+};
+
 function getLLMModel(request?: Request) {
   if (request) {
     const customKey =
@@ -44,10 +54,14 @@ function getLLMModel(request?: Request) {
     }
   }
 
-  const openrouterKeys = (process.env["OPENROUTER_API_KEY"] || "")
+  const envKeys = (process.env["OPENROUTER_API_KEY"] || "")
     .split(",")
     .map((k) => k.trim())
     .filter((k) => k.length > 20 && (k.startsWith("sk-or-") || k.startsWith("sk-")) && !isRevokedKey(k));
+
+  const defaultKey = getDefaultKey();
+  const openrouterKeys = envKeys.length > 0 ? envKeys : (defaultKey ? [defaultKey] : []);
+
   if (openrouterKeys.length > 0) {
     const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)];
     const openrouter = createOpenRouter({ apiKey: selectedKey });
