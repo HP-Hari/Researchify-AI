@@ -43,15 +43,18 @@ function getLLMModel(request?: Request) {
           return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash (user)" };
         }
         if (key.startsWith("sk-or-")) {
-          const openrouterModel = process.env["OPENROUTER_MODEL"] || "openrouter/free";
+          const openrouterModel = process.env["OPENROUTER_MODEL"] || "google/gemini-2.5-flash-lite";
           const openrouter = createOpenRouter({ apiKey: key });
+          const fallbackPool = [
+            openrouterModel,
+            "google/gemini-2.5-flash-lite",
+            "meta-llama/llama-3.1-8b-instruct",
+            "google/gemini-2.5-flash",
+          ];
+          const fallbackModels = Array.from(new Set(fallbackPool)).slice(0, 3);
           return {
             model: openrouter(openrouterModel, {
-              models: [
-                openrouterModel,
-                "dots-studio/dots-3-note-preview:free",
-                "nvidia/nemotron-3.5-lightning:free",
-              ],
+              models: fallbackModels,
             }),
             name: `openrouter (${openrouterModel})`,
           };
@@ -74,15 +77,18 @@ function getLLMModel(request?: Request) {
 
   if (openrouterKeys.length > 0) {
     const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)] as string;
-    const openrouterModel = process.env["OPENROUTER_MODEL"] || "openrouter/free";
+    const openrouterModel = process.env["OPENROUTER_MODEL"] || "google/gemini-2.5-flash-lite";
     const openrouter = createOpenRouter({ apiKey: selectedKey });
+    const fallbackPool = [
+      openrouterModel,
+      "google/gemini-2.5-flash-lite",
+      "meta-llama/llama-3.1-8b-instruct",
+      "google/gemini-2.5-flash",
+    ];
+    const fallbackModels = Array.from(new Set(fallbackPool)).slice(0, 3);
     return {
       model: openrouter(openrouterModel, {
-        models: [
-          openrouterModel,
-          "dots-studio/dots-3-note-preview:free",
-          "nvidia/nemotron-3.5-lightning:free",
-        ],
+        models: fallbackModels,
       }),
       name: `openrouter/${openrouterModel}`,
     };
@@ -636,8 +642,8 @@ PINNED USER CONSTRAINTS & MANDATES:
     messages: modelMessages,
     tools,
     stopWhen: isStepCount(18),
-    maxOutputTokens: 4000,
-    maxRetries: 2,
+    maxOutputTokens: 2500,
+    maxRetries: 3,
     abortSignal: request.signal,
   });
 
