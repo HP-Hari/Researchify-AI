@@ -43,8 +43,18 @@ function getLLMModel(request?: Request) {
           return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash (user)" };
         }
         if (key.startsWith("sk-or-")) {
+          const openrouterModel = process.env["OPENROUTER_MODEL"] || "openrouter/free";
           const openrouter = createOpenRouter({ apiKey: key });
-          return { model: openrouter("google/gemini-2.5-flash-lite"), name: "openrouter (user)" };
+          return {
+            model: openrouter(openrouterModel, {
+              models: [
+                openrouterModel,
+                "dots-studio/dots-3-note-preview:free",
+                "nvidia/nemotron-3.5-lightning:free",
+              ],
+            }),
+            name: `openrouter (${openrouterModel})`,
+          };
         }
         if (key.startsWith("sk-")) {
           const openai = createOpenAI({ apiKey: key });
@@ -64,8 +74,18 @@ function getLLMModel(request?: Request) {
 
   if (openrouterKeys.length > 0) {
     const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)] as string;
+    const openrouterModel = process.env["OPENROUTER_MODEL"] || "openrouter/free";
     const openrouter = createOpenRouter({ apiKey: selectedKey });
-    return { model: openrouter("google/gemini-2.5-flash-lite"), name: "openrouter/gemini-2.5-flash-lite" };
+    return {
+      model: openrouter(openrouterModel, {
+        models: [
+          openrouterModel,
+          "dots-studio/dots-3-note-preview:free",
+          "nvidia/nemotron-3.5-lightning:free",
+        ],
+      }),
+      name: `openrouter/${openrouterModel}`,
+    };
   }
 
   const geminiKeys = (process.env["GEMINI_API_KEY"] || "")
@@ -308,13 +328,19 @@ export async function handleChat(request: Request) {
     system: SYSTEM_PROMPT,
     messages: modelMessages,
     tools,
-    stopWhen: isStepCount(8),
+    stopWhen: isStepCount(16),
     maxOutputTokens: 4000,
     maxRetries: 2,
     abortSignal: request.signal,
   });
 
   return createUIMessageStreamResponse({
-    stream: result.toUIMessageStream(),
+    stream: result.toUIMessageStream({
+      onError: (err) => {
+        const errorMsg = (err as Error)?.message || String(err);
+        console.error("Streaming error in toUIMessageStream:", errorMsg);
+        return errorMsg;
+      },
+    }),
   });
 }
