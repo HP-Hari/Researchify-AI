@@ -1,115 +1,126 @@
 # Researchify AI
 
-> **Autonomous Research Intelligence Engine**
-> Multi-perspective strategic research with live web evidence gathering, adversarial verdict analysis, and structured dossier generation.
+> **Autonomous Enterprise Strategic Intelligence Engine**  
+> Bridgewater & McKinsey-grade recursive research decomposition, live 4-tier empirical grounding, deterministic economic modeling, interactive scenario visualizers, and boardroom-ready executive dossiers.
 
 ---
 
 ## Overview
 
-Researchify AI is a full-stack research intelligence application that decomposes complex questions into parallel investigation branches, scrapes live web sources, and synthesizes structured research dossiers with adversarial analysis (Bull Case vs. Bear Case). It produces executive verdicts, chronological timelines, source-conflict analysis, and actionable decision frameworks — all backed by verifiable web citations.
+**Researchify AI** transforms unstructured strategic inquiries into institutional-grade decision intelligence. Rather than operating as a conventional single-turn conversational chatbot (like ChatGPT, Gemini, or Perplexity), Researchify deploys an autonomous planning loop that recursively decomposes complex theses into orthogonal vectors (Market Economics, Unit Feasibility, Regulatory / Antitrust Moats, and Bear-Case Stress Tests).
+
+It executes multi-angle empirical searches, classifies sources into institutional credibility tiers, calculates deterministic financial metrics (CAGR, gross margins, CAC payback), and streams a structured executive dossier featuring an interactive Conviction Gauge, Recharts scenario models, an Evidence Grounding Drawer, and a 1-page C-Suite Executive Memo.
 
 ---
 
 ## Technical Stack
 
-| Layer | Technology | Purpose |
-|:---|:---|:---|
-| **Framework** | [TanStack Start](https://tanstack.com/start) v1.168 | Full-stack React meta-framework with SSR, file-based routing, and server functions |
-| **Runtime** | [Vite](https://vite.dev) v8.1 | Dev server, HMR, and production bundler |
-| **Server** | [Nitro](https://nitro.build) v3.x | Universal server engine (handles SSR + API routes) |
-| **Language** | TypeScript 5.8 | End-to-end type safety |
-| **UI Library** | React 19 | Component rendering |
-| **Styling** | [Tailwind CSS](https://tailwindcss.com) v4.2 | Utility-first CSS with oklch color system |
-| **Component Primitives** | [Radix UI](https://radix-ui.com) | Accessible, unstyled headless UI components |
-| **Animations** | [Motion](https://motion.dev) (Framer Motion v13) | Layout animations, enter/exit transitions |
-| **Icons** | [Lucide React](https://lucide.dev) | Tree-shakable SVG icon set |
-| **AI SDK** | [Vercel AI SDK](https://sdk.vercel.ai) v7 | Unified streaming interface for LLM tool-calling and SSE transport |
-| **LLM Provider** | Google Generative AI (Gemini Flash series) | Inference backend via `@ai-sdk/google` |
-| **Web Scraping** | [Cheerio](https://cheerio.js.org) v1.2 | Server-side HTML parsing for search result extraction |
-| **Search Engine** | DuckDuckGo HTML | Zero-API-key web search via HTML scraping |
-| **State Management** | [TanStack Query](https://tanstack.com/query) v5 | Server state caching and synchronization |
-| **Markdown Rendering** | [Streamdown](https://github.com/nicepkg/streamdown) v2.6 | Streaming-aware markdown renderer with code highlighting (Shiki), math, mermaid |
-| **Notifications** | [Sonner](https://sonner.emilkowal.dev) v2 | Toast notification system |
-| **Containerization** | Docker (multi-stage Alpine) | Production deployment |
+| Layer | Technology | Version | Purpose & Technical Rationale |
+|:---|:---|:---|:---|
+| **Meta-Framework** | [TanStack Start](https://tanstack.com/start) | `^1.168.32` | Full-stack React framework with SSR, file-based routing, and zero-waterfall server functions |
+| **Runtime & Bundler** | [Vite](https://vite.dev) / Rolldown | `8.1.5` | Instant HMR development server and production asset code-splitting |
+| **Server Engine** | [Nitro](https://nitro.build) | `3.0-beta` | Universal Node/Edge server runtime handling SSR rendering and SSE endpoints |
+| **UI Library** | [React](https://react.dev) | `19.2.0` | React 19 concurrent rendering, server-aware lifecycle management, and transitions |
+| **Type System** | [TypeScript](https://www.typescriptlang.org) | `^5.8.3` | Strict end-to-end type safety across client, server functions, and tool schemas |
+| **Styling Engine** | [Tailwind CSS](https://tailwindcss.com) | `^4.2.1` | Next-gen CSS engine utilizing perceptual `oklch` color spaces and CSS variables |
+| **Component Primitives** | [Radix UI](https://radix-ui.com) | Latest | Accessible, unstyled headless primitives (Dialog, Popover, Dropdown, Tabs) |
+| **Visual Analytics** | [Recharts](https://recharts.org) | `^2.15.4` | Composable SVG data visualizations (Scenario Area Charts, Sensitivity Bar Charts) |
+| **Motion & Micro-interactions** | [Motion](https://motion.dev) | `^13.4.4` | Hardware-accelerated transitions, tree expansions, and drawer slide animations |
+| **AI Orchestration** | [Vercel AI SDK](https://sdk.vercel.ai) | `^7.0.122` | Multi-step agentic loop (`streamText`), tool execution pipeline, and UI message streaming |
+| **LLM Inference** | [OpenRouter](https://openrouter.ai) & Direct Providers | SDK v3.1 | Universal model gateway with native 3-model failover array (`openrouter/free`, `dots-3-note`, `nemotron-3.5`) |
+| **Live Web Scraping** | [Cheerio](https://cheerio.js.org) | `^1.2.0` | High-throughput server-side DOM parsing and cleaned text extraction |
+| **Zero-Config Search** | DuckDuckGo HTML Engine | Custom | Zero-API-key web scraping engine with targeted domain and category syntax |
+| **Markdown Rendering** | [Streamdown](https://github.com/nicepkg/streamdown) | `^2.6.0` | Real-time SSE streaming markdown parser with Shiki syntax highlighting and math rendering |
+| **Icons & Notifications** | [Lucide React](https://lucide.dev) & [Sonner](https://sonner.emilkowal.dev) | `^0.575` / `^2.0` | Clean iconography and non-blocking accessible toast feedback |
 
 ---
 
-## Architecture
+## System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Client (Browser)                         │
-│                                                                 │
-│  ┌──────────┐  ┌────────────────────┐  ┌─────────────────────┐  │
-│  │PromptInput│→│   ChatWindow.tsx    │→│BranchingInvestigation│  │
-│  │          │  │  (useChat + SSE)    │  │   Graph.tsx (SVG)    │  │
-│  └──────────┘  └────────────────────┘  └─────────────────────┘  │
-│                         │ SSE Stream                             │
-├─────────────────────────┼───────────────────────────────────────┤
-│                   Server (Nitro/SSR)                             │
-│                         │                                       │
-│  ┌──────────────────────▼──────────────────────────────────┐    │
-│  │              /api/chat  (POST → SSE)                     │    │
-│  │                                                          │    │
-│  │  ┌──────────────┐    ┌────────────────────────────────┐  │    │
-│  │  │ Model Router  │───│ LLM Pool (round-robin +        │  │    │
-│  │  │ (selectModel) │   │ cooldown circuit breaker)       │  │    │
-│  │  └──────────────┘    └────────────────────────────────┘  │    │
-│  │         │                                                │    │
-│  │  ┌──────▼─────────────────────────────────────────────┐  │    │
-│  │  │ Tool Execution Layer (AI SDK tool() calls)          │  │    │
-│  │  │  ├─ web_search → firecrawl.server.ts → DuckDuckGo  │  │    │
-│  │  │  └─ read_page  → firecrawl.server.ts → fetch+parse │  │    │
-│  │  └────────────────────────────────────────────────────┘  │    │
-│  └──────────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                CLIENT RUNTIME (Browser)                                │
+│                                                                                        │
+│  ┌──────────────────────┐   ┌───────────────────────────────────────────────────────┐  │
+│  │   Search & Lenses    │──▶│                 ChatWindow Orchestrator               │  │
+│  │ (PromptInput / Lenses│   │             (useChat + Server-Sent Events)            │  │
+│  └──────────────────────┘   └──────────────────────────┬────────────────────────────┘  │
+│                                                        │                               │
+│         ┌──────────────────────────────────────────────┼───────────────────────────┐   │
+│         ▼                                              ▼                           ▼   │
+│  ┌───────────────────────┐   ┌──────────────────────────────┐   ┌───────────────────┐  │
+│  │ DossierVisualizer.tsx │   │     EvidenceDrawer.tsx       │   │ExecutiveMemoView  │  │
+│  │  - Conviction Meter   │   │  - 4-Tier Source Hierarchy   │   │ - BLUF Summary    │  │
+│  │  - Recharts Area/Bars │   │  - Verified Quoted Excerpts  │   │ - Decision Matrix │  │
+│  │  - Fatal Vulnerability│   │  - One-Click Citation Copy   │   │ - 30-60-90 Gates  │  │
+│  └───────────────────────┘   └──────────────────────────────┘   └───────────────────┘  │
+└────────────────────────────────────────┬───────────────────────────────────────────────┘
+                                         │ POST /api/chat (SSE Stream)
+┌────────────────────────────────────────▼───────────────────────────────────────────────┐
+│                           SERVER RUNTIME (Nitro / Node SSR)                            │
+│                                                                                        │
+│  ┌──────────────────────────────────────────────────────────────────────────────────┐  │
+│  │                 Autonomous Strategic Planner (src/lib/chat.server.ts)            │  │
+│  │  - McKinsey/Bridgewater Dossier Prompt Blueprint (9 Strict Sections)             │  │
+│  │  - Multi-Step Dynamic Tool Execution (isStepCount: 16)                           │  │
+│  │  - Resilient Model Gateway (3-Model Free Failover Array)                         │  │
+│  └──────────────────────────────────────┬───────────────────────────────────────────┘  │
+│                                         │ Invokes Tools
+│                 ┌───────────────────────┼────────────────────────┐
+│                 ▼                       ▼                        ▼
+│      ┌─────────────────────┐  ┌───────────────────┐  ┌───────────────────────┐
+│      │     web_search      │  │     read_page     │  │  financial_calculator │
+│      │ Category filtering: │  │ Scrapes deep URL  │  │ Deterministic Math:   │
+│      │ SEC, Analyst, ArXiv │  │ page content      │  │ CAGR, Margins, CAC    │
+│      └──────────┬──────────┘  └─────────┬─────────┘  └───────────┬───────────┘
+│                 │                       │                        │
+│                 ▼                       ▼                        ▼
+│      ┌───────────────────────────────────────────────────────────────────────┐
+│      │        Institutional Credibility Tiering Engine (firecrawl.server.ts) │
+│      │  • Tier 1: Regulatory / Academic (SEC, FTC, .gov, .edu, ArXiv, PubMed)│
+│      │  • Tier 2: Institutional Analysts (Bloomberg, Reuters, McKinsey, Bain)│
+│      │  • Tier 3: Industry & Specialized Press (TechCrunch, Wired, Verge)    │
+│      │  • Tier 4: Verified Open Web Sources                                  │
+│      └───────────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### Request Flow
-
-1. User submits a research question via `PromptInput`
-2. `ChatWindow` sends a POST to `/api/chat` using AI SDK's `DefaultChatTransport`
-3. Server selects a healthy model from the pool (`selectModel()` with cooldown-based circuit breaker)
-4. `streamText()` begins streaming, the LLM emits a research plan then invokes `web_search` / `read_page` tools
-5. `web_search` tool scrapes DuckDuckGo HTML results using Cheerio, extracts titles, URLs, and snippets
-6. `read_page` tool fetches and parses individual page content for deep evidence
-7. LLM synthesizes findings into a structured 9-section research dossier
-8. Client renders the streaming response as formatted markdown with the branching investigation graph
-
-### Model Pool & Circuit Breaker
-
-The server maintains an in-memory pool of model identifiers. On each request, `selectModel()` picks the next healthy model via round-robin. If a model returns a rate-limit or error, `markModelCooling()` puts it on a 3-minute cooldown. The pool self-heals as cooldowns expire.
 
 ---
 
-## Core Features
+## Key Functionalities & Features
 
-### Branching Investigation Graph
-Interactive SVG-based visualization that renders the research decomposition tree in real time. Each branch represents a search angle with its discovered sources displayed as clickable leaf nodes. Supports two view modes: **Neural Tree** (animated SVG bezier graph) and **Evidence Matrix** (structured card layout).
+### 1. Autonomous Vector Decomposition
+Instead of writing an immediate off-the-cuff response, the engine breaks strategic queries into distinct inquiry vectors (e.g. Unit Economics, Market Sizing, Regulatory Headwinds, Bear-Case Catalysts) and triggers targeted web searches with category filtering (`regulatory_sec`, `financial_analyst`, `academic_research`).
 
-### Verdict Analysis (Bull Case vs. Bear Case)
-Every research dossier includes an adversarial analysis section that presents the strongest supporting evidence alongside counter-evidence and critical risks, concluding with a decisive risk verdict.
+### 2. 4-Tier Credibility Verification Engine
+Every URL discovered during research is classified into a structured credibility hierarchy:
+- **Tier 1 (Regulatory & Peer-Reviewed):** Official government filings, legal registries, and academic repositories (`sec.gov`, `ftc.gov`, `arxiv.org`, `.gov`, `.edu`).
+- **Tier 2 (Institutional Market Analyst):** Premier financial intelligence (`bloomberg.com`, `reuters.com`, `mckinsey.com`, `statista.com`, `spglobal.com`).
+- **Tier 3 (Specialized Industry Press):** Technical and venture reporting (`techcrunch.com`, `wired.com`, `theverge.com`).
+- **Tier 4 (Verified Web Sources):** Curated public domain intelligence.
 
-### Research Dossier Structure
-Each generated report follows a 9-section structure:
-1. Executive Verdict (direct answer with confidence index)
-2. Core Synthesis & Findings
-3. Chronological Evolution Timeline (2022–2026)
-4. Verdict Analysis (Bull/Bear case)
-5. Deep-Dive Findings by Sub-Question
-6. Where Sources Disagree & Contradictions
-7. Confidence Assessment & Unverified Gaps
-8. Primary Source Indices & Verified Citations
-9. Related Strategic Questions (3 contextual follow-ups)
+### 3. Interactive Dossier Visualizer & Conviction Index
+- **Conviction Index Gauge:** Dynamically extracts the synthesized conviction score (0–100%) and displays a radial conviction badge.
+- **Recharts Scenario Modeling:** Automatically parses Markdown financial tables and projection paragraphs into interactive SVG charts (Scenario Projections Area Chart and Probability-Weight Horizontal Bar Chart).
+- **Fatal Vulnerability Card:** Highlights red-team operational and structural downfalls in a dedicated callout banner.
 
-### Export Tools
-- **Copy** — Full markdown to clipboard
-- **Export .MD** — Downloads the dossier as a `.md` file with YAML frontmatter metadata
-- **PDF** — Renders a print-optimized HTML document in an isolated iframe for multi-page Save-as-PDF export
+### 4. Interactive Grounding & Evidence Drawer
+Slide-out inspection panel providing comprehensive transparency:
+- Filter citations by credibility tier (Tier 1 to Tier 4).
+- Real-time search filter across titles, domains, and extracted snippets.
+- Copy formal academic/business citations directly to the clipboard.
+- Direct external links to primary sources.
 
-### Dark / Light Mode
-Built-in theme switcher with `Light`, `Dark`, and `System` modes. Uses oklch color space for perceptually uniform theming. Anti-FOUC handled via inline script in `<head>`.
+### 5. 1-Page C-Suite Executive Memo Toggle
+Executives can switch views via the report toolbar:
+- **Full Dossier:** Comprehensive 9-section deep dive.
+- **Executive Memo (1-Page):** Formats the dossier into a crisp executive brief featuring Bottom Line Up Front (BLUF), Strategic Verdict, Fatal Vulnerability trigger, and 30-60-90 Day Execution Gates.
+- **Visual Analytics:** Isolates Recharts data projections and scenario weightings.
+
+### 6. Multi-Format Boardroom Exports
+- **CSV Data Download:** One-click extraction of Markdown comparison tables into clean CSV spreadsheets.
+- **Markdown Export:** Formatted Markdown file download with YAML metadata.
+- **Print / Boardroom PDF:** Clean CSS print stylesheet configured with page breaks, isolated iframes, and print-ready typography.
 
 ---
 
@@ -118,7 +129,6 @@ Built-in theme switcher with `Light`, `Dark`, and `System` modes. Uses oklch col
 ### Prerequisites
 - **Node.js** ≥ 18.x
 - **npm**, **pnpm**, or **bun**
-- A Gemini API key (set as environment variable)
 
 ### 1. Clone & Install
 ```bash
@@ -127,102 +137,91 @@ cd Researchify-AI
 npm install
 ```
 
-### 2. Configure Environment
+### 2. Configure Environment (Optional)
+The application includes an embedded zero-config fallback key with native multi-model routing that works out-of-the-box. To configure your own keys or preferred models:
+
 ```bash
 cp .env.example .env
 ```
 
-Add your API key to `.env`:
 ```env
-GEMINI_API_KEY="your_api_key_here"
+# Optional: Provide your own OpenRouter key (works with free or paid tiers)
+OPENROUTER_API_KEY="sk-or-v1-..."
+
+# Optional: Specify preferred model (defaults to openrouter/free with 3-model failover)
+OPENROUTER_MODEL="openrouter/free"
+
+# Optional: Direct Gemini API key
+GEMINI_API_KEY="AIza..."
+
+# Optional: Direct OpenAI API key
+OPENAI_API_KEY="sk-..."
 ```
 
-### 3. Start Development Server
+### 3. Run Development Server
 ```bash
 npm run dev
 ```
 Open [http://localhost:8080](http://localhost:8080) in your browser.
+
+### 4. Production Build & Typecheck
+```bash
+npx tsc --noEmit
+npm run build
+npm run start
+```
 
 ---
 
 ## Project Structure
 
 ```
-researchify-ai/
+Researchify-AI/
 ├── src/
 │   ├── components/
-│   │   ├── ai-elements/           # Streaming conversation primitives (Message, Prompt, Tool)
+│   │   ├── ai-elements/               # Streaming conversation primitives (Message, PromptInput)
 │   │   ├── research/
-│   │   │   ├── BranchingInvestigationGraph.tsx  # SVG investigation tree + evidence matrix
-│   │   │   ├── ChatWindow.tsx                    # Main chat orchestrator (useChat, SSE)
-│   │   │   ├── ReportToolbar.tsx                 # Copy / Export / PDF toolbar
-│   │   │   └── SearchResultCard.tsx              # Search result display components
-│   │   └── ui/                    # Base UI primitives (Radix-based)
+│   │   │   ├── ChatWindow.tsx         # Main research orchestrator & SSE streaming client
+│   │   │   ├── DossierVisualizer.tsx  # Dynamic Recharts area/bar charts & Conviction Gauge
+│   │   │   ├── EvidenceDrawer.tsx     # Slide-out 4-tier primary source evidence drawer
+│   │   │   ├── ExecutiveMemoView.tsx  # 1-Page C-Suite Memo view (BLUF, Verdict, 30-60-90 Gates)
+│   │   │   ├── ReportToolbar.tsx      # View switcher, CSV export, Markdown download, Print/PDF
+│   │   │   ├── SearchResultCard.tsx   # Live tool-call indicators & financial calc results
+│   │   │   └── ApiKeyModal.tsx        # Client-side custom API key management
+│   │   └── ui/                        # Radix UI primitives (Button, Dialog, Popover, Tabs)
 │   ├── hooks/
-│   │   └── use-theme.ts           # Theme provider (light/dark/system)
+│   │   └── use-theme.ts               # Theme provider (light/dark/system)
 │   ├── lib/
-│   │   ├── chat.server.ts         # LLM orchestration, model pool, system prompt, tool definitions
-│   │   ├── firecrawl.server.ts    # Web scraping engine (DuckDuckGo HTML + Cheerio)
-│   │   ├── threads.ts             # Client-side localStorage thread persistence
-│   │   └── utils.ts               # Utility helpers (cn/classnames)
+│   │   ├── chat.server.ts             # Autonomous multi-angle planner, tools, model router
+│   │   ├── firecrawl.server.ts        # DuckDuckGo HTML scraping & 4-tier credibility classifier
+│   │   ├── threads.ts                 # Local storage thread persistence & session manager
+│   │   └── utils.ts                   # Utility functions & class merging
 │   ├── routes/
-│   │   ├── __root.tsx             # Root layout, SEO meta, font loading, theme init
-│   │   ├── index.tsx              # Landing / thread selector route
-│   │   ├── chat.$threadId.tsx     # Active research session route
-│   │   └── api/chat.ts            # POST /api/chat → SSE streaming endpoint
-│   ├── server.ts                  # SSR entry point (error boundary wrapper)
-│   └── styles.css                 # Design tokens (oklch), typography, print/PDF styles
-├── .env.example                   # Environment variable template
-├── Dockerfile                     # Multi-stage production build (Node 20 Alpine)
-├── docker-compose.yml             # Container orchestration config
-├── package.json                   # Dependencies and scripts
-├── vite.config.ts                 # Vite + TanStack Start configuration
-└── tsconfig.json                  # TypeScript compiler configuration
+│   │   ├── __root.tsx                 # Root layout, HTML meta, theme hydration script
+│   │   ├── index.tsx                  # Strategic research entry & query composer
+│   │   ├── chat.$threadId.tsx         # Active research thread route
+│   │   └── api/chat.ts                # POST /api/chat Server-Sent Events endpoint
+│   ├── server.ts                      # SSR production entry point
+│   └── styles.css                     # Design tokens (oklch), Recharts styling, print CSS
+├── Dockerfile                         # Multi-stage production container build
+├── package.json                       # Dependencies & build scripts
+├── tsconfig.json                      # Strict TypeScript compiler options
+└── vite.config.ts                     # Vite + TanStack Start configuration
 ```
-
----
-
-## Scripts
-
-| Command | Description |
-|:---|:---|
-| `npm run dev` | Start Vite dev server with HMR (default port 8080) |
-| `npm run build` | Build production bundle |
-| `npm run preview` | Preview production build locally |
-| `npx tsc --noEmit` | Type-check without emitting files |
 
 ---
 
 ## Deployment
 
-### Docker
+### Docker Deployment
 ```bash
-# Build and run
-docker compose up --build -d
-
-# Or build manually
 docker build -t researchify-ai .
-docker run -p 8080:8080 -e GEMINI_API_KEY="your_key" researchify-ai
+docker run -p 8080:8080 researchify-ai
 ```
 
-### Platform Deployment
-The Docker image is compatible with:
-- **Railway** — Connect GitHub repo, auto-deploys from Dockerfile
-- **Render** — Web Service with Docker runtime
-- **Fly.io** — `fly launch` auto-detects Dockerfile
-- **Google Cloud Run** — Container-based serverless
-
-Set `GEMINI_API_KEY` as an environment variable in your hosting provider's dashboard.
-
----
-
-## Environment Variables
-
-| Variable | Required | Description |
-|:---|:---|:---|
-| `GEMINI_API_KEY` | Yes | API key for the LLM inference backend |
-| `PORT` | No | Server port (default: `8080`) |
-| `APP_URL` | No | Public URL of the application |
+### Cloud Platforms (Render, Railway, Fly.io, Cloud Run)
+- **Render / Railway:** Connect your GitHub repository. The application will build via `npm run build` and launch using `npm run start` or Docker automatically.
+- **Port:** The server automatically binds to `process.env.PORT` or defaults to `8080`.
 
 ---
 
