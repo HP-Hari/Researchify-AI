@@ -25,8 +25,7 @@ function getLLMModel(request?: Request) {
       const key = customKey.trim();
       if (key.startsWith("AIza") || key.startsWith("AQ.")) {
         const google = createGoogleGenerativeAI({ 
-          apiKey: key, 
-          baseURL: "https://generativelanguage.googleapis.com/v1beta" 
+          apiKey: key 
         });
         return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash (user)" };
       }
@@ -48,8 +47,7 @@ function getLLMModel(request?: Request) {
   if (geminiKeys.length > 0) {
     const selectedKey = geminiKeys[Math.floor(Math.random() * geminiKeys.length)];
     const google = createGoogleGenerativeAI({ 
-      apiKey: selectedKey,
-      baseURL: "https://generativelanguage.googleapis.com/v1beta"
+      apiKey: selectedKey
     });
     return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash" };
   }
