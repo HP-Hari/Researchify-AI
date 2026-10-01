@@ -45,7 +45,7 @@ export function ApiKeyModal({
       return;
     }
 
-    if (!trimmed.startsWith("AIza") && !trimmed.startsWith("sk-")) {
+    if (!trimmed.startsWith("AIza") && !trimmed.startsWith("sk-") && !trimmed.startsWith("AQ.")) {
       toast.error("Invalid API Key format", {
         description: "Google Gemini keys start with 'AIzaSy...'. OpenAI/OpenRouter keys start with 'sk-'.",
       });
@@ -55,7 +55,7 @@ export function ApiKeyModal({
     localStorage.setItem("researchify.apiKey", trimmed);
     setSavedKey(trimmed);
     toast.success("API Key saved!", {
-      description: "Live web search and Gemini intelligence are now active.",
+      description: "Live web search and LLM intelligence are now active.",
     });
     setOpen(false);
   };
@@ -84,21 +84,40 @@ export function ApiKeyModal({
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          <div className="rounded-lg border border-border/70 bg-muted/40 p-3 text-xs space-y-1.5">
-            <div className="flex items-center justify-between font-medium">
-              <span>Google Gemini API Key (Recommended)</span>
-              <a
-                href="https://aistudio.google.com/app/apikey"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline font-normal"
-              >
-                Get free key <ExternalLink className="size-3" />
-              </a>
+          <div className="rounded-lg border border-border/70 bg-muted/40 p-3 text-xs space-y-3">
+            <div>
+              <div className="flex items-center justify-between font-medium mb-1.5">
+                <span>Google Gemini API Key (Recommended)</span>
+                <a
+                  href="https://aistudio.google.com/app/apikey"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-primary hover:underline font-normal"
+                >
+                  Get free key <ExternalLink className="size-3" />
+                </a>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                Keys begin with <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">AIzaSy...</code>.
+              </p>
             </div>
-            <p className="text-muted-foreground leading-relaxed">
-              Google provides free Gemini 1.5/2.5 API keys with generous quotas at Google AI Studio. Keys begin with <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">AIzaSy...</code>.
-            </p>
+            
+            <div className="border-t border-border/50 pt-2">
+              <div className="flex items-center justify-between font-medium mb-1.5">
+                <span>OpenRouter API Key (Alternative)</span>
+                <a
+                  href="https://openrouter.ai/keys"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-primary hover:underline font-normal"
+                >
+                  Get key <ExternalLink className="size-3" />
+                </a>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                Keys begin with <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">sk-or-v1-</code>.
+              </p>
+            </div>
           </div>
 
           <div className="space-y-1.5">

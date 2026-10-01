@@ -161,7 +161,7 @@ export function ChatWindow({
                     type="button"
                     className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/50 hover:bg-muted px-3 py-1 text-xs text-muted-foreground hover:text-foreground transition-all shadow-xs"
                   >
-                    <span>{hasCustomKey ? "🟢 Live Gemini API Connected" : "💡 Autonomous Synthesis Active · Connect Gemini API"}</span>
+                    <span>{hasCustomKey ? "🟢 Live LLM API Connected" : "💡 Autonomous Synthesis Active · Connect LLM API"}</span>
                   </button>
                 }
               />
@@ -418,7 +418,7 @@ export function ChatWindow({
                       type="button"
                       className="rounded-full border border-border/80 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
                     >
-                      {hasCustomKey ? "Live Gemini Active" : "Connect API Key"}
+                      {hasCustomKey ? "Live API Active" : "Connect API Key"}
                     </button>
                   }
                 />
