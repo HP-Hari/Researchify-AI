@@ -1,10 +1,76 @@
 import * as cheerio from "cheerio";
 
+export type SourceTier = "tier1" | "tier2" | "tier3" | "tier4";
+
 export type SearchHit = {
   title: string;
   url: string;
   snippet: string;
+  domain?: string;
+  tier?: SourceTier;
+  tierLabel?: string;
 };
+
+export function classifySourceTier(urlStr: string): { tier: SourceTier; tierLabel: string } {
+  try {
+    const url = new URL(urlStr);
+    const host = url.hostname.toLowerCase();
+
+    // Tier 1: Regulatory, Academic, Government, Official Research
+    if (
+      host.endsWith(".gov") ||
+      host.endsWith(".edu") ||
+      host.includes("sec.gov") ||
+      host.includes("arxiv.org") ||
+      host.includes("nih.gov") ||
+      host.includes("ftc.gov") ||
+      host.includes("fda.gov") ||
+      host.includes("europa.eu") ||
+      host.includes("worldbank.org") ||
+      host.includes("imf.org") ||
+      host.includes("nature.com") ||
+      host.includes("science.org")
+    ) {
+      return { tier: "tier1", tierLabel: "Regulatory / Peer-Reviewed" };
+    }
+
+    // Tier 2: Institutional Financial & Strategic Market Intelligence
+    if (
+      host.includes("bloomberg.com") ||
+      host.includes("reuters.com") ||
+      host.includes("wsj.com") ||
+      host.includes("ft.com") ||
+      host.includes("mckinsey.com") ||
+      host.includes("bain.com") ||
+      host.includes("gartner.com") ||
+      host.includes("statista.com") ||
+      host.includes("economist.com") ||
+      host.includes("forbes.com") ||
+      host.includes("hbr.org") ||
+      host.includes("spglobal.com")
+    ) {
+      return { tier: "tier2", tierLabel: "Institutional Market Analyst" };
+    }
+
+    // Tier 3: Specialized Tech & Industry Press
+    if (
+      host.includes("techcrunch.com") ||
+      host.includes("theverge.com") ||
+      host.includes("wired.com") ||
+      host.includes("cnbc.com") ||
+      host.includes("arstechnica.com") ||
+      host.includes("venturebeat.com") ||
+      host.includes("mit.edu") ||
+      host.includes("technologyreview.com")
+    ) {
+      return { tier: "tier3", tierLabel: "Specialized Industry Press" };
+    }
+
+    return { tier: "tier4", tierLabel: "Verified Web Source" };
+  } catch {
+    return { tier: "tier4", tierLabel: "Verified Web Source" };
+  }
+}
 
 export async function searchWeb(
   query: string,
@@ -71,10 +137,14 @@ export async function searchWeb(
             (validated.protocol === "http:" || validated.protocol === "https:") &&
             !validated.hostname.includes("duckduckgo.com")
           ) {
+            const { tier, tierLabel } = classifySourceTier(cleanUrl);
             results.push({
               title,
               url: cleanUrl,
               snippet: snippet || title,
+              domain: validated.hostname.replace(/^www\./, ""),
+              tier,
+              tierLabel,
             });
           }
         } catch {
