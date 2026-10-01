@@ -29,7 +29,11 @@ export function ApiKeyModal({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("researchify.apiKey") || "";
+      let stored = localStorage.getItem("researchify.apiKey") || "";
+      if (stored.includes("ff0e6ccf") || stored.endsWith("4908c84c")) {
+        localStorage.removeItem("researchify.apiKey");
+        stored = "";
+      }
       setApiKey(stored);
       setSavedKey(stored);
     }

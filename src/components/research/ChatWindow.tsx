@@ -95,7 +95,13 @@ export function ChatWindow({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setHasCustomKey(Boolean(localStorage.getItem("researchify.apiKey")));
+      const stored = localStorage.getItem("researchify.apiKey");
+      if (stored && (stored.includes("ff0e6ccf") || stored.endsWith("4908c84c"))) {
+        localStorage.removeItem("researchify.apiKey");
+        setHasCustomKey(false);
+      } else {
+        setHasCustomKey(Boolean(stored));
+      }
     }
   }, []);
 
@@ -105,8 +111,12 @@ export function ChatWindow({
     transport: new DefaultChatTransport({
       api: "/api/chat",
       headers: () => {
-        const key = typeof window !== "undefined" ? localStorage.getItem("researchify.apiKey") || "" : "";
-        return key ? { "x-api-key": key } : {};
+        if (typeof window === "undefined") return {};
+        const key = localStorage.getItem("researchify.apiKey") || "";
+        if (key && !key.includes("ff0e6ccf") && !key.endsWith("4908c84c")) {
+          return { "x-api-key": key };
+        }
+        return {};
       },
     }),
     onError: (chatError) => {

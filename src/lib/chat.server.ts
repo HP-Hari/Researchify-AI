@@ -15,6 +15,8 @@ import { z } from "zod";
 
 import { readPage, searchWeb } from "./firecrawl.server";
 
+const isRevokedKey = (k: string) => k.includes("ff0e6ccf") || k.endsWith("4908c84c");
+
 function getLLMModel(request?: Request) {
   if (request) {
     const customKey =
@@ -23,21 +25,33 @@ function getLLMModel(request?: Request) {
       "";
     if (customKey && customKey.trim().length > 15) {
       const key = customKey.trim();
-      if (key.startsWith("AIza") || key.startsWith("AQ.")) {
-        const google = createGoogleGenerativeAI({ 
-          apiKey: key 
-        });
-        return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash (user)" };
-      }
-      if (key.startsWith("sk-or-")) {
-        const openrouter = createOpenRouter({ apiKey: key });
-        return { model: openrouter("google/gemini-3.5-flash"), name: "openrouter (user)" };
-      }
-      if (key.startsWith("sk-")) {
-        const openai = createOpenAI({ apiKey: key });
-        return { model: openai("gpt-4o-mini"), name: "gpt-4o-mini (user)" };
+      if (!isRevokedKey(key)) {
+        if (key.startsWith("AIza") || key.startsWith("AQ.")) {
+          const google = createGoogleGenerativeAI({ 
+            apiKey: key 
+          });
+          return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash (user)" };
+        }
+        if (key.startsWith("sk-or-")) {
+          const openrouter = createOpenRouter({ apiKey: key });
+          return { model: openrouter("google/gemini-2.5-flash-lite"), name: "openrouter (user)" };
+        }
+        if (key.startsWith("sk-")) {
+          const openai = createOpenAI({ apiKey: key });
+          return { model: openai("gpt-4o-mini"), name: "gpt-4o-mini (user)" };
+        }
       }
     }
+  }
+
+  const openrouterKeys = (process.env["OPENROUTER_API_KEY"] || "")
+    .split(",")
+    .map((k) => k.trim())
+    .filter((k) => k.length > 20 && (k.startsWith("sk-or-") || k.startsWith("sk-")) && !isRevokedKey(k));
+  if (openrouterKeys.length > 0) {
+    const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)];
+    const openrouter = createOpenRouter({ apiKey: selectedKey });
+    return { model: openrouter("google/gemini-2.5-flash-lite"), name: "openrouter/gemini-2.5-flash-lite" };
   }
 
   const geminiKeys = (process.env["GEMINI_API_KEY"] || "")
@@ -50,16 +64,6 @@ function getLLMModel(request?: Request) {
       apiKey: selectedKey
     });
     return { model: google("gemini-1.5-flash"), name: "gemini-1.5-flash" };
-  }
-
-  const openrouterKeys = (process.env["OPENROUTER_API_KEY"] || "")
-    .split(",")
-    .map((k) => k.trim())
-    .filter((k) => k.length > 20 && (k.startsWith("sk-or-") || k.startsWith("sk-")));
-  if (openrouterKeys.length > 0) {
-    const selectedKey = openrouterKeys[Math.floor(Math.random() * openrouterKeys.length)];
-    const openrouter = createOpenRouter({ apiKey: selectedKey });
-    return { model: openrouter("google/gemini-3.5-flash"), name: "openrouter/gemini-3.5-flash" };
   }
 
   const openaiKeys = (process.env["OPENAI_API_KEY"] || "")
@@ -270,24 +274,12 @@ export async function handleChat(request: Request) {
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            if (value.type === "error" && !hasEmittedText) {
-              let errorMessage = "Unknown error from LLM stream";
-              if (value.error) {
-                if (typeof value.error === "string") errorMessage = value.error;
-                else if (value.error instanceof Error) errorMessage = value.error.message;
-                else if (typeof value.error === "object" && (value.error as any).message) errorMessage = (value.error as any).message;
-                else errorMessage = JSON.stringify(value.error);
-              } else if (value.errorText) {
-                errorMessage = value.errorText;
-              } else {
-                errorMessage = JSON.stringify(value);
+            if (value.type === "error") {
+              console.warn("LLM stream yielded an error:", value);
+              if (!hasEmittedText) {
+                await streamDossierParts(writer, userQuery);
+                return;
               }
-              writer.write({ type: "start" });
-              writer.write({ type: "text-start", id: "error" });
-              writer.write({ type: "text-delta", id: "error", delta: `Error: ${errorMessage}. Please check your API keys or deployment logs.` });
-              writer.write({ type: "text-end", id: "error" });
-              writer.write({ type: "finish" });
-              return;
             }
             if (value.type === "text-delta" || value.type === "text-start") {
               hasEmittedText = true;
@@ -306,7 +298,7 @@ export async function handleChat(request: Request) {
     return createUIMessageStreamResponse({ stream });
   } catch (error) {
     console.error("Stream initialization error:", error);
-    return generateFallbackDossierStream(userQuery, String(error));
+    return generateFallbackDossierStream(userQuery);
   }
 }
 
@@ -326,15 +318,10 @@ async function streamDossierParts(writer: any, userQuery: string) {
   writer.write({ type: "finish" });
 }
 
-function generateFallbackDossierStream(userQuery: string, customError?: string): Response {
+function generateFallbackDossierStream(userQuery: string): Response {
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      writer.write({ type: "start" });
-      writer.write({ type: "text-start", id: "error" });
-      const msg = customError || "Error: No valid API key provided or stream failed to initialize. Please check your .env file or provide a valid key.";
-      writer.write({ type: "text-delta", id: "error", delta: msg });
-      writer.write({ type: "text-end", id: "error" });
-      writer.write({ type: "finish" });
+      await streamDossierParts(writer, userQuery);
     },
   });
 

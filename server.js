@@ -7,6 +7,27 @@ import { Readable } from "node:stream";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Ensure local .env file is loaded if present
+try {
+  const envPath = path.resolve(__dirname, ".env");
+  if (fs.existsSync(envPath)) {
+    const envLines = fs.readFileSync(envPath, "utf8").split("\n");
+    for (const line of envLines) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+        const eqIdx = trimmed.indexOf("=");
+        const k = trimmed.slice(0, eqIdx).trim();
+        const v = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
+        if (!process.env[k]) {
+          process.env[k] = v;
+        }
+      }
+    }
+  }
+} catch {
+  // Ignore in environments without .env file
+}
+
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || "0.0.0.0";
 const CLIENT_DIR = path.resolve(__dirname, "dist/client");
