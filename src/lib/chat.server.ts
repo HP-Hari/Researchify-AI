@@ -146,14 +146,14 @@ MANDATORY DOSSIER STRUCTURE:
 ### 1. Executive Summary & BLUF (Bottom Line Up Front)
 [High-density executive synthesis answering the core dilemma with decisive clarity]
 
-### 2. Quantitative Financial & Market Benchmarks
-[Include a high-density Markdown comparison table containing key metrics, such as TAM/SAM, CAGR, Unit Economics, Gross Margin, Payback Period, or Capital Intensity across Baseline, Bull Case, and Bear Case]
+### 2. Cross-Source Evidence Synthesis & Quantitative Benchmarks
+[Compare empirical findings across institutional analysts, filings, and industry reports. Include a high-density Markdown comparison table containing key metrics (e.g. TAM/SAM, CAGR, Unit Economics, Gross Margin, Payback Period) highlighting areas of consensus and data divergence across sources]
 
 ### 3. Chronological Evolution & Market Milestones (2022–2026)
 [Timeline of seminal events, capital injections, regulatory rulings, and breakthrough shifts that formed the current landscape]
 
-### 4. Technical Feasibility, Scalability & Failure Modes
-[Deep engineering/operational breakdown of real-world friction, latency, unit cost curves, and architectural bottlenecks]
+### 4. Technical Feasibility, Unit Economics & Failure Modes
+[Deep engineering and operational breakdown of real-world friction, latency, unit cost curves, and architectural bottlenecks]
 
 ### 5. Regulatory, Compliance & Antitrust Landscape
 [Jurisdictional hurdles (US/FTC/SEC, EU AI Act/GDPR, APAC), compliance overhead, and legal exposure]
@@ -163,18 +163,18 @@ MANDATORY DOSSIER STRUCTURE:
 - **Bear Case (Probability: XX%):** [Failure triggers, unit-economic compression, replacement risks]
 - **Strategic Verdict:** [Synthesis of which case dominates and why]
 
-### 7. Actionable 30-60-90 Day Strategic Roadmap
-- **Days 1–30 (Diagnostic & Validation):** [Immediate proofs-of-concept, key hire, regulatory audit]
-- **Days 31–60 (Infrastructure & Partner Moats):** [Vendor pilots, contract architecture, risk hedges]
-- **Days 61–90 (Execution & Scale Milestone):** [Commercial launch threshold, go/no-go audit gate]
+### 7. Strategic Decision Framework & Risk Hedging
+- **Go / No-Go Decision Triggers:** [Specific quantitative thresholds and empirical market signals required before capital commitment]
+- **Downside Hedging & Capital Insulation:** [Tactical mechanisms to protect downside exposure against identified failure modes]
+- **Resource Allocation Priorities:** [Highest-ROI investment focal points based on verified cross-source findings]
 
-### 8. Consulted Sources & Evidence Verification Log
-[Numbered list matching your inline citations [1], [2], with Title, Domain, and Credibility Tier]
+### 8. Audited Evidence Index & Source Verification Log
+[Numbered list matching your inline citations [1], [2], with Title, Domain, Quoted Evidence, and Credibility Tier]
 
-### 9. Strategic Follow-Up Investigations
-[3 sharp, high-value strategic questions for subsequent deep dives]
+### 9. Priority Strategic Follow-Up Vectors
+[3 sharp, high-leverage strategic research questions for subsequent deep dives]
 
-Never output generic disclaimers or canned templates. All dossiers must be dynamically synthesized with high analytical depth.`;
+Never output generic disclaimers, childish task lists, or canned templates. All dossiers must be dynamically synthesized with high analytical depth.`;
 
 export async function handleChat(request: Request) {
   let body: { messages?: any[] };

@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Building,
   Target,
+  ShieldAlert,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -41,10 +42,10 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
       /(?:###\s*(?:1\.\s*)?Executive Summary[^\n]*)([\s\S]*?)(?:###|$)/i
     );
 
-    // 30-60-90 Roadmap
-    const roadmapMatch = markdown.match(
-      /(?:###\s*(?:7\.\s*)?Actionable 30-60-90[^\n]*)([\s\S]*?)(?:###|$)/i
-    );
+    // Strategic Decision Framework & Action Gates
+    const frameworkMatch =
+      markdown.match(/(?:###\s*(?:7\.\s*)?Strategic Decision Framework[^\n]*)([\s\S]*?)(?:###|$)/i) ||
+      markdown.match(/(?:###\s*(?:7\.\s*)?Actionable 30-60-90[^\n]*)([\s\S]*?)(?:###|$)/i);
 
     const recommendation = recMatch ? recMatch[1]?.trim() : "PROCEED WITH CONDITIONS";
     const conviction = convictionMatch ? convictionMatch[1]?.trim() : "82";
@@ -55,23 +56,23 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
       ? blufMatch[1]?.trim().replace(/^>\s*/gm, "").slice(0, 500)
       : "The market and technological fundamentals indicate substantial strategic viability, provided key execution gates are satisfied.";
 
-    // Parse roadmap items
-    const roadmapItems: { period: string; task: string }[] = [];
-    if (roadmapMatch) {
-      const lines = roadmapMatch[1]?.split("\n").filter((l) => l.trim().length > 0) || [];
+    // Parse decision framework pillars
+    const decisionPillars: { title: string; detail: string }[] = [];
+    if (frameworkMatch) {
+      const lines = frameworkMatch[1]?.split("\n").filter((l) => l.trim().length > 0) || [];
       lines.forEach((l) => {
-        const itemMatch = l.match(/(?:[-*]\s*)?\*?\*?(Days\s*\d+[-–]\d+[^:*]*):?\*?\*?\s*(.+)/i);
+        const itemMatch = l.match(/(?:[-*]\s*)?\*?\*?([^:*]+):\*?\*?\s*(.+)/i);
         if (itemMatch && itemMatch[1] && itemMatch[2]) {
-          roadmapItems.push({ period: itemMatch[1].trim(), task: itemMatch[2].trim() });
+          decisionPillars.push({ title: itemMatch[1].trim(), detail: itemMatch[2].trim() });
         }
       });
     }
 
-    if (roadmapItems.length === 0) {
-      roadmapItems.push(
-        { period: "Days 1–30", task: "Execute technical proof-of-concept and initiate regulatory scoping audit." },
-        { period: "Days 31–60", task: "Lock primary vendor architecture and establish pilot partner commitments." },
-        { period: "Days 61–90", task: "Complete commercial stress-test and conduct formal go/no-go gate audit." }
+    if (decisionPillars.length === 0) {
+      decisionPillars.push(
+        { title: "Go / No-Go Decision Triggers", detail: "Empirical proof of unit economic margin thresholds and regulatory non-interference." },
+        { title: "Downside Hedging & Capital Insulation", detail: "Structured pilot contracts, dual-vendor sourcing, and strict capital draw-down gates." },
+        { title: "Resource Allocation Priorities", detail: "Prioritize proprietary data pipelines, tier-1 compliance certifications, and key partner moats." }
       );
     }
 
@@ -81,7 +82,7 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
       thesis,
       fatalRisk,
       blufText,
-      roadmapItems,
+      decisionPillars,
     };
   }, [markdown]);
 
@@ -161,23 +162,23 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
         </div>
       ) : null}
 
-      {/* 30-60-90 Day Action Gate */}
+      {/* Strategic Decision Framework & Action Gates */}
       <div className="space-y-3">
         <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          <Calendar className="size-4 text-accent" />
-          Immediate 30-60-90 Day Execution Gates
+          <ShieldAlert className="size-4 text-accent" />
+          Strategic Decision Framework & Action Gates
         </h3>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          {memoData.roadmapItems.map((item, idx) => (
+          {memoData.decisionPillars.map((item, idx) => (
             <div
               key={idx}
               className="rounded-xl border border-border/80 bg-card p-3.5 space-y-1.5 transition-all hover:border-accent hover:shadow-xs"
             >
               <span className="inline-block rounded-md bg-secondary px-2 py-0.5 font-mono text-[10px] font-bold text-foreground">
-                {item.period}
+                {item.title}
               </span>
               <p className="text-xs text-foreground font-medium leading-relaxed">
-                {item.task}
+                {item.detail}
               </p>
             </div>
           ))}

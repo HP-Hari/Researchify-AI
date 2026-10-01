@@ -52,7 +52,7 @@ It executes multi-angle empirical searches, classifies sources into institutiona
 │  │ DossierVisualizer.tsx │   │     EvidenceDrawer.tsx       │   │ExecutiveMemoView  │  │
 │  │  - Conviction Meter   │   │  - 4-Tier Source Hierarchy   │   │ - BLUF Summary    │  │
 │  │  - Recharts Area/Bars │   │  - Verified Quoted Excerpts  │   │ - Decision Matrix │  │
-│  │  - Fatal Vulnerability│   │  - One-Click Citation Copy   │   │ - 30-60-90 Gates  │  │
+│  │  - Fatal Vulnerability│   │  - One-Click Citation Copy   │   │ - Action Gates     │  │
 │  └───────────────────────┘   └──────────────────────────────┘   └───────────────────┘  │
 └────────────────────────────────────────┬───────────────────────────────────────────────┘
                                          │ POST /api/chat (SSE Stream)
@@ -114,7 +114,7 @@ Slide-out inspection panel providing comprehensive transparency:
 ### 5. 1-Page C-Suite Executive Memo Toggle
 Executives can switch views via the report toolbar:
 - **Full Dossier:** Comprehensive 9-section deep dive.
-- **Executive Memo (1-Page):** Formats the dossier into a crisp executive brief featuring Bottom Line Up Front (BLUF), Strategic Verdict, Fatal Vulnerability trigger, and 30-60-90 Day Execution Gates.
+- **Executive Memo (1-Page):** Formats the dossier into a crisp executive brief featuring Bottom Line Up Front (BLUF), Strategic Verdict, Fatal Vulnerability trigger, and Strategic Decision Framework & Action Gates.
 - **Visual Analytics:** Isolates Recharts data projections and scenario weightings.
 
 ### 6. Multi-Format Boardroom Exports
@@ -184,7 +184,7 @@ Researchify-AI/
 │   │   │   ├── ChatWindow.tsx         # Main research orchestrator & SSE streaming client
 │   │   │   ├── DossierVisualizer.tsx  # Dynamic Recharts area/bar charts & Conviction Gauge
 │   │   │   ├── EvidenceDrawer.tsx     # Slide-out 4-tier primary source evidence drawer
-│   │   │   ├── ExecutiveMemoView.tsx  # 1-Page C-Suite Memo view (BLUF, Verdict, 30-60-90 Gates)
+│   │   │   ├── ExecutiveMemoView.tsx  # 1-Page C-Suite Memo view (BLUF, Verdict, Decision Gates)
 │   │   │   ├── ReportToolbar.tsx      # View switcher, CSV export, Markdown download, Print/PDF
 │   │   │   ├── SearchResultCard.tsx   # Live tool-call indicators & financial calc results
 │   │   │   └── ApiKeyModal.tsx        # Client-side custom API key management

@@ -33,7 +33,7 @@ const SECTIONS = [
   { label: "Feasibility", search: "Technical Feasibility" },
   { label: "Regulatory", search: "Regulatory" },
   { label: "Bull vs Bear", search: "Bull Case" },
-  { label: "30-60-90 Roadmap", search: "30-60-90" },
+  { label: "Decision Framework", search: "Decision Framework" },
   { label: "Sources", search: "Sources" },
 ];
 

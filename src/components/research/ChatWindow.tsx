@@ -495,13 +495,13 @@ export function ChatWindow({
                               type="button"
                               onClick={() =>
                                 submit(
-                                  `Detail the exact operational 30-60-90 day execution milestones, resource allocation, and go/no-go gate audit criteria.`
+                                  `Synthesize cross-source consensus and empirical data conflicts across institutions, and define the quantitative go/no-go decision thresholds.`
                                 )
                               }
                               className="flex items-center gap-1.5 rounded-lg border border-purple-500/20 bg-purple-500/5 p-2 text-left text-xs font-semibold text-purple-700 dark:text-purple-400 hover:bg-purple-500/10 transition-colors cursor-pointer"
                             >
-                              <Calendar className="size-3.5 shrink-0 text-purple-500" />
-                              <span>30-60-90 Day Plan</span>
+                              <ShieldCheck className="size-3.5 shrink-0 text-purple-500" />
+                              <span>Decision Framework & Synthesis</span>
                             </button>
                           </div>
                         </div>
