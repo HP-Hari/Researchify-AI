@@ -12,6 +12,8 @@ import {
   FileText,
   Copy,
   Check,
+  Calendar,
+  Award,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -24,6 +26,10 @@ export interface VerifiedSource {
   tier?: "tier1" | "tier2" | "tier3" | "tier4";
   tierLabel?: string;
   angle?: string;
+  authorityScore?: number;
+  sourceType?: string;
+  estimatedYear?: string;
+  verificationStatus?: "verified" | "caution" | "unverified";
 }
 
 interface EvidenceDrawerProps {
@@ -259,9 +265,31 @@ export function EvidenceDrawer({
                     </a>
                   </h3>
 
-                  <div className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground">
-                    <Globe className="size-3" />
-                    <span>{source.domain || source.url}</span>
+                  <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Globe className="size-3" />
+                      <span>{source.domain || source.url}</span>
+                    </div>
+
+                    {source.estimatedYear ? (
+                      <span className="inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-foreground">
+                        <Calendar className="size-2.5" />
+                        {source.estimatedYear}
+                      </span>
+                    ) : null}
+
+                    {source.authorityScore ? (
+                      <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-foreground">
+                        <Award className="size-2.5 text-accent" />
+                        Authority: {source.authorityScore}/100
+                      </span>
+                    ) : null}
+
+                    {source.sourceType ? (
+                      <span className="text-[10px] text-muted-foreground/80 truncate max-w-[200px]">
+                        • {source.sourceType}
+                      </span>
+                    ) : null}
                   </div>
 
                   {source.snippet ? (

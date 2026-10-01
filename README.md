@@ -46,81 +46,86 @@ It executes multi-angle empirical searches, classifies sources into institutiona
 │  │ (PromptInput / Lenses│   │             (useChat + Server-Sent Events)            │  │
 │  └──────────────────────┘   └──────────────────────────┬────────────────────────────┘  │
 │                                                        │                               │
-│         ┌──────────────────────────────────────────────┼───────────────────────────┐   │
-│         ▼                                              ▼                           ▼   │
-│  ┌───────────────────────┐   ┌──────────────────────────────┐   ┌───────────────────┐  │
-│  │ DossierVisualizer.tsx │   │     EvidenceDrawer.tsx       │   │ExecutiveMemoView  │  │
-│  │  - Conviction Meter   │   │  - 4-Tier Source Hierarchy   │   │ - BLUF Summary    │  │
-│  │  - Recharts Area/Bars │   │  - Verified Quoted Excerpts  │   │ - Decision Matrix │  │
-│  │  - Fatal Vulnerability│   │  - One-Click Citation Copy   │   │ - Action Gates     │  │
-│  └───────────────────────┘   └──────────────────────────────┘   └───────────────────┘  │
+│         ┌───────────────────┬──────────────────────────┼───────────────────────────┐   │
+│         ▼                   ▼                          ▼                           ▼   │
+│  ┌──────────────┐   ┌───────────────┐   ┌──────────────────────────────┐   ┌───────────────┐
+│  │SystemState-  │   │Conflict-      │   │     EvidenceDrawer.tsx       │   │ExecutiveMemo- │
+│  │ChecklistCard │   │ResolutionCard │   │  - 4-Tier Source Hierarchy   │   │View.tsx       │
+│  │- Ledger Verif│   │- Metadata/Year│   │  - Authority Score / Year    │   │- BLUF Summary │
+│  │- Constraints │   │- Adjudication │   │  - One-Click Citation Copy   │   │- Action Gates │
+│  └──────────────┘   └───────────────┘   └──────────────────────────────┘   └───────────────┘
 └────────────────────────────────────────┬───────────────────────────────────────────────┘
                                          │ POST /api/chat (SSE Stream)
 ┌────────────────────────────────────────▼───────────────────────────────────────────────┐
 │                           SERVER RUNTIME (Nitro / Node SSR)                            │
 │                                                                                        │
 │  ┌──────────────────────────────────────────────────────────────────────────────────┐  │
-│  │                 Autonomous Strategic Planner (src/lib/chat.server.ts)            │  │
-│  │  - McKinsey/Bridgewater Dossier Prompt Blueprint (9 Strict Sections)             │  │
-│  │  - Multi-Step Dynamic Tool Execution (isStepCount: 16)                           │  │
+│  │                 Autonomous Strategic Engine (src/lib/chat.server.ts)             │  │
+│  │  - Pinned System State & User Inquiry Ledger (Pinned at Context Top)             │  │
+│  │  - McKinsey/Bridgewater Dossier Blueprint (Strict Section Word Budgets)          │  │
+│  │  - SearchMemoryTracker (>85% Overlap Diminishing Returns Hard Stop)              │  │
 │  │  - Resilient Model Gateway (3-Model Free Failover Array)                         │  │
 │  └──────────────────────────────────────┬───────────────────────────────────────────┘  │
-│                                         │ Invokes Tools
-│                 ┌───────────────────────┼────────────────────────┐
-│                 ▼                       ▼                        ▼
-│      ┌─────────────────────┐  ┌───────────────────┐  ┌───────────────────────┐
-│      │     web_search      │  │     read_page     │  │  financial_calculator │
-│      │ Category filtering: │  │ Scrapes deep URL  │  │ Deterministic Math:   │
-│      │ SEC, Analyst, ArXiv │  │ page content      │  │ CAGR, Margins, CAC    │
-│      └──────────┬──────────┘  └─────────┬─────────┘  └───────────┬───────────┘
-│                 │                       │                        │
-│                 ▼                       ▼                        ▼
-│      ┌───────────────────────────────────────────────────────────────────────┐
-│      │        Institutional Credibility Tiering Engine (firecrawl.server.ts) │
-│      │  • Tier 1: Regulatory / Academic (SEC, FTC, .gov, .edu, ArXiv, PubMed)│
-│      │  • Tier 2: Institutional Analysts (Bloomberg, Reuters, McKinsey, Bain)│
-│      │  • Tier 3: Industry & Specialized Press (TechCrunch, Wired, Verge)    │
-│      │  • Tier 4: Verified Open Web Sources                                  │
-│      └───────────────────────────────────────────────────────────────────────┘
+│                                         │ Autonomous Tool Invocations
+│       ┌───────────────────────┬─────────┴───────────────┬────────────────────────┐
+│       ▼                       ▼                         ▼                        ▼
+│  ┌──────────────┐    ┌─────────────────┐       ┌─────────────────┐      ┌────────────────┐
+│  │  web_search  │    │resolve_conflict │       │verify_claims_   │      │   read_page    │
+│  │Memory Tracker│    │Metadata: Year,  │       │post_audit       │      │  Deep Scraper  │
+│  │Stop @ 3 Loops│    │Tier & Recency   │       │Boolean T/F Audit│      │Cleaned Text DOM│
+│  └──────────────┘    └─────────────────┘       └─────────────────┘      └────────────────┘
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Key Functionalities & Features
+## Key Enterprise Functionalities & Research Modules
 
-### 1. Autonomous Vector Decomposition
-Instead of writing an immediate off-the-cuff response, the engine breaks strategic queries into distinct inquiry vectors (e.g. Unit Economics, Market Sizing, Regulatory Headwinds, Bear-Case Catalysts) and triggers targeted web searches with category filtering (`regulatory_sec`, `financial_analyst`, `academic_research`).
+### 1. Dedicated Conflict Resolution Module (`resolve_conflict`)
+When research uncovers conflicting data points, market sizes, or growth forecasts across disparate sources, the autonomous engine does not guess or average blindly. It invokes the Conflict Resolution Module to evaluate source metadata:
+- **Recency & Publication Year Delta:** Evaluates whether Source B is 3+ years newer, reflecting post-transition reality.
+- **Authority Score & Tier Ranking:** Weighs Tier 1 Peer-Reviewed/Regulatory sources (95/100) against Tier 4 Marketing Blogs/PR (50/100).
+- **Methodological Rigor:** Distinguishes audited SEC filings and empirical surveys from unverified top-of-funnel vendor projections.
+- **Analyst Adjudication Output:** Generates human-grade conflict adjudication callouts detailing the credibility evaluation and definitive metric.
 
-### 2. 4-Tier Credibility Verification Engine
-Every URL discovered during research is classified into a structured credibility hierarchy:
-- **Tier 1 (Regulatory & Peer-Reviewed):** Official government filings, legal registries, and academic repositories (`sec.gov`, `ftc.gov`, `arxiv.org`, `.gov`, `.edu`).
-- **Tier 2 (Institutional Market Analyst):** Premier financial intelligence (`bloomberg.com`, `reuters.com`, `mckinsey.com`, `statista.com`, `spglobal.com`).
-- **Tier 3 (Specialized Industry Press):** Technical and venture reporting (`techcrunch.com`, `wired.com`, `theverge.com`).
-- **Tier 4 (Verified Web Sources):** Curated public domain intelligence.
+### 2. Strict Hierarchical Compression & Section Word Budgets
+To prevent verbose, rambling AI outputs, Researchify AI enforces strict sub-section word budgets:
+- **Executive Verdict & Decision Matrix:** ~75 words
+- **Section 1. Executive Summary & BLUF:** 150–200 words
+- **Section 2. Strategic Synthesis & High-Order Implications:** 300–400 words
+- **Section 3. Chronological Evolution (2022–2026):** 150–200 words
+- **Section 4. Technical Feasibility & Unit Economics:** 250–350 words
+- **Section 5. Regulatory, Compliance & Antitrust:** 150–200 words
+- **Section 6. Bull Case vs. Bear Case Stress Test:** 200–250 words
+- **Section 7. Strategic Decision Framework & Risk Hedging:** 200–250 words
+- **Section 8. Audited Evidence Index & Grounding Log:** 150–200 words
+- **Section 9. Priority Strategic Follow-Up Vectors:** 75–100 words
+- **Total Dossier Budget:** 1,600–1,900 words maximum.
+- **Hierarchical Information Pruning:** Facts are ranked by relevance to the query. Tier 1 causal drivers are retained; Tier 2 metrics are compressed into comparison tables; Tier 3 marketing noise and introductory platitudes are aggressively purged.
 
-### 3. Interactive Dossier Visualizer & Conviction Index
-- **Conviction Index Gauge:** Dynamically extracts the synthesized conviction score (0–100%) and displays a radial conviction badge.
-- **Recharts Scenario Modeling:** Automatically parses Markdown financial tables and projection paragraphs into interactive SVG charts (Scenario Projections Area Chart and Probability-Weight Horizontal Bar Chart).
-- **Fatal Vulnerability Card:** Highlights red-team operational and structural downfalls in a dedicated callout banner.
+### 3. Strict Editorial Post-Verification Loop (`verify_claims_post_audit`)
+Before delivering the dossier, a strict editorial verification pass audits every key empirical assertion:
+- Extracts critical numerical metrics and claims alongside cited URLs.
+- Executes a Boolean True/False check on whether the cited primary source explicitly substantiates the claim.
+- If a claim fails verification, the engine drops the claim or flags it with explicit epistemic caution.
+- Computes an aggregate **Grounding Fidelity Score** (e.g. 95%) displayed in the evidence index and UI cards.
 
-### 4. Interactive Grounding & Evidence Drawer
-Slide-out inspection panel providing comprehensive transparency:
-- Filter citations by credibility tier (Tier 1 to Tier 4).
-- Real-time search filter across titles, domains, and extracted snippets.
-- Copy formal academic/business citations directly to the clipboard.
-- Direct external links to primary sources.
+### 4. Writing Phase Transformation: Synthesis & Implications
+Instead of passively summarizing search results, the writing phase mandates high-order strategic synthesis:
+- **Core Driving Factors:** Identifies the macroeconomic, capital, or architectural forces driving the data.
+- **Asymmetric Trade-Offs:** Uncovers what is structurally sacrificed for every gain (e.g. latency vs accuracy, open ecosystem vs regulatory compliance).
+- **Cross-Source Benchmark Matrix:** High-density Markdown comparison table highlighting consensus and divergence.
+- **Unresolved Epistemic Blindspots:** Isolates what is genuinely unobservable from public filings.
 
-### 5. 1-Page C-Suite Executive Memo Toggle
-Executives can switch views via the report toolbar:
-- **Full Dossier:** Comprehensive 9-section deep dive.
-- **Executive Memo (1-Page):** Formats the dossier into a crisp executive brief featuring Bottom Line Up Front (BLUF), Strategic Verdict, Fatal Vulnerability trigger, and Strategic Decision Framework & Action Gates.
-- **Visual Analytics:** Isolates Recharts data projections and scenario weightings.
+### 5. Persistent System State & Verification Checklist
+- **Context Pinned Ledger:** The user's original strategic query and core constraints are permanently pinned at the very top of the context window (`[PINNED SYSTEM STATE & USER INQUIRY LEDGER]`).
+- **Mandatory Pre-Generation Checklist:** Before generating the final dossier, the agent outputs a verified `<system_checklist>` explicitly confirming that the primary inquiry, multi-source cross-verification, conflict adjudication, strategic trade-offs, and compression budgets have been satisfied.
+- **Dedicated UI Rendering:** Rendered in the client as an interactive, verified checklist card with green status indicators.
 
-### 6. Multi-Format Boardroom Exports
-- **CSV Data Download:** One-click extraction of Markdown comparison tables into clean CSV spreadsheets.
-- **Markdown Export:** Formatted Markdown file download with YAML metadata.
-- **Print / Boardroom PDF:** Clean CSS print stylesheet configured with page breaks, isolated iframes, and print-ready typography.
+### 6. Diminishing Returns Threshold & Hard Stop Protocol
+- **Search Memory Buffer:** A session-scoped `SearchMemoryTracker` tokenizes incoming search snippets and computes Jaccard semantic similarity against accumulated memory.
+- **Hard Stop at >85% Overlap:** If 3 consecutive searches yield >85% semantic redundancy, the search loop is forcibly halted.
+- **Intellectual Integrity Mandate:** Rather than endlessly querying or hallucinating estimates, the agent writes: *"Information on this specific metric is not publicly available in verified primary sources or audited filings."*
 
 ---
 

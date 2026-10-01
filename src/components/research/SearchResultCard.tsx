@@ -1,11 +1,22 @@
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, AlertCircle } from "lucide-react";
 
 type Hit = { title?: string; url?: string; snippet?: string };
 
 export function SearchResults({
   output,
 }: {
-  output: { query?: string; purpose?: string; results?: Hit[]; error?: string } | undefined;
+  output: {
+    query?: string;
+    purpose?: string;
+    results?: Hit[];
+    error?: string;
+    diminishingReturnsAlert?: {
+      triggered: boolean;
+      consecutiveRedundantSearches: number;
+      semanticSimilarity: string;
+      systemDirective?: string;
+    };
+  } | undefined;
 }) {
   if (!output) return null;
 
@@ -17,6 +28,18 @@ export function SearchResults({
 
   return (
     <div className="space-y-2 p-3">
+      {output.diminishingReturnsAlert?.triggered ? (
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-2.5 text-xs text-amber-700 dark:text-amber-300 space-y-1">
+          <div className="flex items-center gap-1.5 font-semibold">
+            <AlertCircle className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <span>Diminishing Returns Threshold Triggered ({output.diminishingReturnsAlert.semanticSimilarity} overlap)</span>
+          </div>
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            3 consecutive queries yielded &gt;85% redundancy. Search loop halted to prevent circular polling. Transitioning directly to synthesis.
+          </p>
+        </div>
+      ) : null}
+
       {output.purpose ? (
         <p className="text-xs text-muted-foreground">
           <span className="font-medium text-foreground">Goal:</span> {output.purpose}

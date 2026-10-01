@@ -36,6 +36,11 @@ import { ApiKeyModal } from "@/components/research/ApiKeyModal";
 import { EvidenceDrawer, type VerifiedSource } from "@/components/research/EvidenceDrawer";
 import { DossierVisualizer } from "@/components/research/DossierVisualizer";
 import { ExecutiveMemoView } from "@/components/research/ExecutiveMemoView";
+import {
+  ConflictResolutionCard,
+  EditorialVerificationCard,
+  SystemStateChecklistCard,
+} from "@/components/research/ResearchAuditCards";
 import agentMark from "@/assets/agent-mark.png";
 import { saveThreadMessages } from "@/lib/threads";
 
@@ -196,6 +201,9 @@ export function ChatWindow({
                   domain: r.domain,
                   tier: r.tier || "tier4",
                   tierLabel: r.tierLabel || "Verified Source",
+                  authorityScore: r.authorityScore || (r.tier === "tier1" ? 95 : r.tier === "tier2" ? 85 : r.tier === "tier3" ? 70 : 50),
+                  sourceType: r.sourceType,
+                  estimatedYear: r.estimatedYear,
                   angle: inp?.purpose,
                 });
               }
@@ -334,6 +342,17 @@ export function ChatWindow({
                         const key = `${message.id}-${index}`;
 
                         if (part.type === "text") {
+                          const checklistMatch = part.text.match(/<system_checklist>([\s\S]*?)<\/system_checklist>/);
+                          if (checklistMatch && checklistMatch[1]) {
+                            const checklistContent = checklistMatch[1];
+                            const remainingText = part.text.replace(/<system_checklist>[\s\S]*?<\/system_checklist>/, "").trim();
+                            return (
+                              <div key={key} className="space-y-3">
+                                <SystemStateChecklistCard content={checklistContent} />
+                                {remainingText ? <MessageResponse>{remainingText}</MessageResponse> : null}
+                              </div>
+                            );
+                          }
                           return <MessageResponse key={key}>{part.text}</MessageResponse>;
                         }
 
@@ -343,6 +362,54 @@ export function ChatWindow({
                               <summary className="cursor-pointer select-none font-medium">Strategic Planning & Reasoning</summary>
                               <p className="mt-1 whitespace-pre-wrap">{part.text}</p>
                             </details>
+                          );
+                        }
+
+                        if (part.type === "tool-resolve_conflict") {
+                          return (
+                            <Tool defaultOpen={true} key={key}>
+                              <ToolHeader
+                                type={part.type}
+                                state={part.state}
+                                title="Conflict Resolution Module · Metadata & Recency Adjudication"
+                                className="[&_svg:first-child]:hidden"
+                              />
+                              <ToolContent>
+                                <ToolInput input={part.input} />
+                                <ToolOutput
+                                  errorText={part.errorText}
+                                  output={
+                                    part.state === "output-available" ? (
+                                      <ConflictResolutionCard output={part.output as never} />
+                                    ) : undefined
+                                  }
+                                />
+                              </ToolContent>
+                            </Tool>
+                          );
+                        }
+
+                        if (part.type === "tool-verify_claims_post_audit") {
+                          return (
+                            <Tool defaultOpen={true} key={key}>
+                              <ToolHeader
+                                type={part.type}
+                                state={part.state}
+                                title="Editorial Post-Verification Loop · True/False Grounding Audit"
+                                className="[&_svg:first-child]:hidden"
+                              />
+                              <ToolContent>
+                                <ToolInput input={part.input} />
+                                <ToolOutput
+                                  errorText={part.errorText}
+                                  output={
+                                    part.state === "output-available" ? (
+                                      <EditorialVerificationCard output={part.output as never} />
+                                    ) : undefined
+                                  }
+                                />
+                              </ToolContent>
+                            </Tool>
                           );
                         }
 

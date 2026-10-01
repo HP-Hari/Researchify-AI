@@ -6,12 +6,25 @@ export type SearchHit = {
   title: string;
   url: string;
   snippet: string;
-  domain?: string;
-  tier?: SourceTier;
-  tierLabel?: string;
+  domain?: string | undefined;
+  tier?: SourceTier | undefined;
+  tierLabel?: string | undefined;
+  authorityScore?: number | undefined;
+  sourceType?: string | undefined;
+  estimatedYear?: string | undefined;
 };
 
-export function classifySourceTier(urlStr: string): { tier: SourceTier; tierLabel: string } {
+export function extractYearFromText(text: string): string | undefined {
+  const match = text.match(/\b(202[0-7]|201\d)\b/);
+  return match ? match[1] : undefined;
+}
+
+export function classifySourceTier(urlStr: string): {
+  tier: SourceTier;
+  tierLabel: string;
+  authorityScore: number;
+  sourceType: string;
+} {
   try {
     const url = new URL(urlStr);
     const host = url.hostname.toLowerCase();
@@ -31,7 +44,12 @@ export function classifySourceTier(urlStr: string): { tier: SourceTier; tierLabe
       host.includes("nature.com") ||
       host.includes("science.org")
     ) {
-      return { tier: "tier1", tierLabel: "Regulatory / Peer-Reviewed" };
+      return {
+        tier: "tier1",
+        tierLabel: "Regulatory / Peer-Reviewed",
+        authorityScore: 95,
+        sourceType: "Official Regulatory / Academic Repository",
+      };
     }
 
     // Tier 2: Institutional Financial & Strategic Market Intelligence
@@ -49,7 +67,12 @@ export function classifySourceTier(urlStr: string): { tier: SourceTier; tierLabe
       host.includes("hbr.org") ||
       host.includes("spglobal.com")
     ) {
-      return { tier: "tier2", tierLabel: "Institutional Market Analyst" };
+      return {
+        tier: "tier2",
+        tierLabel: "Institutional Market Analyst",
+        authorityScore: 85,
+        sourceType: "Institutional Financial / Market Intelligence",
+      };
     }
 
     // Tier 3: Specialized Tech & Industry Press
@@ -63,12 +86,27 @@ export function classifySourceTier(urlStr: string): { tier: SourceTier; tierLabe
       host.includes("mit.edu") ||
       host.includes("technologyreview.com")
     ) {
-      return { tier: "tier3", tierLabel: "Specialized Industry Press" };
+      return {
+        tier: "tier3",
+        tierLabel: "Specialized Industry Press",
+        authorityScore: 70,
+        sourceType: "Specialized Industry & Technology Press",
+      };
     }
 
-    return { tier: "tier4", tierLabel: "Verified Web Source" };
+    return {
+      tier: "tier4",
+      tierLabel: "Verified Web Source",
+      authorityScore: 50,
+      sourceType: "General Industry / Web Source",
+    };
   } catch {
-    return { tier: "tier4", tierLabel: "Verified Web Source" };
+    return {
+      tier: "tier4",
+      tierLabel: "Verified Web Source",
+      authorityScore: 50,
+      sourceType: "General Industry / Web Source",
+    };
   }
 }
 
@@ -137,7 +175,8 @@ export async function searchWeb(
             (validated.protocol === "http:" || validated.protocol === "https:") &&
             !validated.hostname.includes("duckduckgo.com")
           ) {
-            const { tier, tierLabel } = classifySourceTier(cleanUrl);
+            const { tier, tierLabel, authorityScore, sourceType } = classifySourceTier(cleanUrl);
+            const estimatedYear = extractYearFromText(title + " " + snippet + " " + cleanUrl);
             results.push({
               title,
               url: cleanUrl,
@@ -145,6 +184,9 @@ export async function searchWeb(
               domain: validated.hostname.replace(/^www\./, ""),
               tier,
               tierLabel,
+              authorityScore,
+              sourceType,
+              estimatedYear,
             });
           }
         } catch {
