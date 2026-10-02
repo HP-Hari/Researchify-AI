@@ -1,8 +1,20 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import dns from "node:dns";
 import { fileURLToPath } from "node:url";
 import { Readable } from "node:stream";
+
+try {
+  dns.setDefaultResultOrder("ipv4first");
+} catch {}
+
+process.on("uncaughtException", (err) => {
+  console.error("Critical uncaughtException guarded:", err);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("Critical unhandledRejection guarded:", reason);
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +29,10 @@ try {
       if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
         const eqIdx = trimmed.indexOf("=");
         const k = trimmed.slice(0, eqIdx).trim();
-        const v = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
+        const v = trimmed
+          .slice(eqIdx + 1)
+          .trim()
+          .replace(/^["']|["']$/g, "");
         if (!process.env[k]) {
           process.env[k] = v;
         }
@@ -33,7 +48,7 @@ if (!process.env.OPENROUTER_API_KEY) {
   try {
     process.env.OPENROUTER_API_KEY = Buffer.from(
       "c2stb3ItdjEtMDQ5M2VhMThhMTk0ZmQzMGYxODRjMWNlMWJhMTZjY2IyYzIyMGNkYmZkZjI0ZWRhODU5MGVjNGYyODBhZWRiYg==",
-      "base64"
+      "base64",
     ).toString("utf-8");
   } catch {}
 }
@@ -75,10 +90,21 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     const pathname = decodeURIComponent(url.pathname);
 
-    // 1. Serve static files from dist/client
+    // 1. Serve static files from dist/client or public/uploads
     if (pathname !== "/" && !pathname.startsWith("/api/")) {
-      const filePath = path.join(CLIENT_DIR, pathname);
-      if (filePath.startsWith(CLIENT_DIR) && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      const publicUploadPath = path.join(__dirname, "public", pathname);
+      const isPublicUpload =
+        pathname.startsWith("/uploads/") &&
+        publicUploadPath.startsWith(path.join(__dirname, "public")) &&
+        fs.existsSync(publicUploadPath) &&
+        fs.statSync(publicUploadPath).isFile();
+
+      const filePath = isPublicUpload ? publicUploadPath : path.join(CLIENT_DIR, pathname);
+      if (
+        (isPublicUpload || filePath.startsWith(CLIENT_DIR)) &&
+        fs.existsSync(filePath) &&
+        fs.statSync(filePath).isFile()
+      ) {
         const ext = path.extname(filePath).toLowerCase();
         const contentType = MIME_TYPES[ext] || "application/octet-stream";
         res.setHeader("Content-Type", contentType);
@@ -121,7 +147,19 @@ const server = http.createServer(async (req, res) => {
       return res.end();
     }
 
-    Readable.fromWeb(webResponse.body).pipe(res);
+    const bodyStream = Readable.fromWeb(webResponse.body);
+    bodyStream.on("error", (err) => {
+      console.warn("Client response stream error (safe ignore):", err?.message || err);
+      if (!res.destroyed) res.destroy();
+    });
+    res.on("close", () => {
+      if (!bodyStream.destroyed) bodyStream.destroy();
+    });
+    res.on("error", (err) => {
+      console.warn("Client socket error (safe ignore):", err?.message || err);
+      if (!bodyStream.destroyed) bodyStream.destroy();
+    });
+    bodyStream.pipe(res);
   } catch (error) {
     console.error("Server error handling request:", error);
     if (!res.headersSent) {

@@ -46,7 +46,11 @@ export function BranchingInvestigationGraph({
   const [activeBranchIndex, setActiveBranchIndex] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"tree" | "cards">("tree");
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
-  const [selectedSnippet, setSelectedSnippet] = useState<{ title: string; url: string; snippet: string } | null>(null);
+  const [selectedSnippet, setSelectedSnippet] = useState<{
+    title: string;
+    url: string;
+    snippet: string;
+  } | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const coreRef = useRef<HTMLDivElement>(null);
@@ -57,10 +61,17 @@ export function BranchingInvestigationGraph({
   const branches = useMemo(() => {
     return searches.map((s, idx) => {
       let title = `Angle #${idx + 1}`;
-      if (s.purpose && !s.purpose.toLowerCase().includes("general research") && s.purpose.trim().length > 5) {
+      if (
+        s.purpose &&
+        !s.purpose.toLowerCase().includes("general research") &&
+        s.purpose.trim().length > 5
+      ) {
         title = s.purpose;
       } else if (s.query && s.query.trim().length > 0) {
-        const cleaned = s.query.replace(/^(search for|find|lookup|status of|current status of)\s+/i, "");
+        const cleaned = s.query.replace(
+          /^(search for|find|lookup|status of|current status of)\s+/i,
+          "",
+        );
         title = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
       }
       // Filter out sources without valid http(s) URLs to prevent fake/invalid sources
@@ -125,26 +136,37 @@ export function BranchingInvestigationGraph({
   }, [branches, viewMode, isExpanded]);
 
   useEffect(() => {
+    let rafId: number | null = null;
     const handleResize = () => {
-      if (viewMode === "tree" && isExpanded) {
-        updatePaths();
-      }
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        try {
+          if (viewMode === "tree" && isExpanded) {
+            updatePaths();
+          }
+        } catch {
+          // ignore transient layout measurement errors
+        }
+      });
     };
     window.addEventListener("resize", handleResize);
 
-    const ro = new ResizeObserver(() => {
-      handleResize();
-    });
-    if (containerRef.current) {
-      ro.observe(containerRef.current);
-    }
+    let ro: ResizeObserver | null = null;
+    try {
+      ro = new ResizeObserver(() => {
+        handleResize();
+      });
+      if (containerRef.current) {
+        ro.observe(containerRef.current);
+      }
+    } catch {}
 
-    // Secondary timer to catch late layout reflows
     const timer = setTimeout(handleResize, 150);
 
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("resize", handleResize);
-      ro.disconnect();
+      if (ro) ro.disconnect();
       clearTimeout(timer);
     };
   }, [branches.length, viewMode, isExpanded]);
@@ -176,7 +198,8 @@ export function BranchingInvestigationGraph({
               ) : (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-600 ring-1 ring-emerald-500/20 dark:text-emerald-400">
                   <CheckCircle2 className="size-3" />
-                  {branches.length} Investigation {branches.length === 1 ? "Branch" : "Branches"} • {totalSources} Sources Found
+                  {branches.length} Investigation {branches.length === 1 ? "Branch" : "Branches"} •{" "}
+                  {totalSources} Sources Found
                 </span>
               )}
             </div>
@@ -196,7 +219,7 @@ export function BranchingInvestigationGraph({
                 "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all duration-200",
                 viewMode === "tree"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               <GitBranch className="size-3.5" />
@@ -209,7 +232,7 @@ export function BranchingInvestigationGraph({
                 "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all duration-200",
                 viewMode === "cards"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               <Layers className="size-3.5" />
@@ -225,7 +248,10 @@ export function BranchingInvestigationGraph({
             title={isExpanded ? "Collapse tree" : "Expand tree"}
           >
             <ChevronDown
-              className={cn("size-4 transition-transform duration-200", !isExpanded && "-rotate-90")}
+              className={cn(
+                "size-4 transition-transform duration-200",
+                !isExpanded && "-rotate-90",
+              )}
             />
           </button>
         </div>
@@ -283,7 +309,7 @@ export function BranchingInvestigationGraph({
                           filter={isActive ? "url(#branchNeonFilter)" : undefined}
                           className={cn(
                             "transition-all duration-300",
-                            isActive ? "opacity-100" : "opacity-60"
+                            isActive ? "opacity-100" : "opacity-60",
                           )}
                         >
                           <animate
@@ -341,7 +367,7 @@ export function BranchingInvestigationGraph({
                       "grid gap-4",
                       branches.length === 1 && "max-w-xl mx-auto grid-cols-1",
                       branches.length === 2 && "max-w-3xl mx-auto grid-cols-1 md:grid-cols-2",
-                      branches.length >= 3 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                      branches.length >= 3 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
                     )}
                   >
                     {branches.map((branch, index) => {
@@ -361,7 +387,7 @@ export function BranchingInvestigationGraph({
                             "group relative flex flex-col rounded-2xl border p-4 transition-all duration-300 backdrop-blur-md",
                             isHovered
                               ? "border-accent/90 bg-accent/10 shadow-xl -translate-y-1 ring-1 ring-accent/30"
-                              : "border-border/80 bg-card/70 hover:border-border hover:shadow-md"
+                              : "border-border/80 bg-card/70 hover:border-border hover:shadow-md",
                           )}
                         >
                           {/* Branch Header */}
@@ -389,7 +415,8 @@ export function BranchingInvestigationGraph({
                                 Discovered Sources
                               </span>
                               <span className="font-mono text-muted-foreground">
-                                {branch.sources.length} {branch.sources.length === 1 ? "source" : "sources"}
+                                {branch.sources.length}{" "}
+                                {branch.sources.length === 1 ? "source" : "sources"}
                               </span>
                             </div>
 
@@ -403,7 +430,8 @@ export function BranchingInvestigationGraph({
                                 {branch.sources.slice(0, 4).map((src, sIdx) => {
                                   let hostname = "";
                                   try {
-                                    if (src.url) hostname = new URL(src.url).hostname.replace(/^www\./, "");
+                                    if (src.url)
+                                      hostname = new URL(src.url).hostname.replace(/^www\./, "");
                                   } catch {
                                     hostname = "web";
                                   }

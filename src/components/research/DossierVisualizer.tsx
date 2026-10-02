@@ -40,22 +40,26 @@ export function DossierVisualizer({ markdown, title }: DossierVisualizerProps) {
   // 1. Extract Executive Verdict & Decision Matrix
   const verdict = useMemo(() => {
     const recommendationMatch = markdown.match(
-      /(?:Strategic Recommendation|Recommendation):\s*\*?\*?([A-Z\s/]+)\*?\*?/i
+      /(?:Strategic Recommendation|Recommendation):\s*\*?\*?([A-Z\s/]+)\*?\*?/i,
     );
     const convictionMatch = markdown.match(
-      /(?:Conviction Index|Confidence|Conviction):\s*\*?\*?(\d{1,3})%?\*?\*?/i
+      /(?:Conviction Index|Confidence|Conviction):\s*\*?\*?(\d{1,3})%?\*?\*?/i,
     );
-    const thesisMatch = markdown.match(
-      /(?:Core Thesis|Thesis):\s*\*?\*?([^\n\r*]+)/i
-    );
+    const thesisMatch = markdown.match(/(?:Core Thesis|Thesis):\s*\*?\*?([^\n\r*]+)/i);
     const riskMatch = markdown.match(
-      /(?:Fatal Vulnerability|Fatal Risk|Black Swan):\s*\*?\*?([^\n\r*]+)/i
+      /(?:Fatal Vulnerability|Fatal Risk|Black Swan):\s*\*?\*?([^\n\r*]+)/i,
     );
 
-    const recommendation = recommendationMatch ? recommendationMatch[1]?.trim() : "PROCEED WITH CONDITIONS";
+    const recommendation = recommendationMatch
+      ? recommendationMatch[1]?.trim()
+      : "PROCEED WITH CONDITIONS";
     const conviction = convictionMatch ? parseInt(convictionMatch[1] || "80", 10) : 82;
-    const thesis = thesisMatch ? thesisMatch[1]?.trim() : "Empirical analysis indicates compelling long-term strategic upside with bounded execution headwinds.";
-    const fatalRisk = riskMatch ? riskMatch[1]?.trim() : "Unanticipated regulatory shift or capital deployment overrun.";
+    const thesis = thesisMatch
+      ? thesisMatch[1]?.trim()
+      : "Empirical analysis indicates compelling long-term strategic upside with bounded execution headwinds.";
+    const fatalRisk = riskMatch
+      ? riskMatch[1]?.trim()
+      : "Unanticipated regulatory shift or capital deployment overrun.";
 
     const recStr = recommendation || "PROCEED WITH CONDITIONS";
     const isProceed = /PROCEED/i.test(recStr) && !/DO NOT/i.test(recStr);
@@ -143,8 +147,8 @@ export function DossierVisualizer({ markdown, title }: DossierVisualizerProps) {
                 verdict.isReject
                   ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
                   : verdict.isCaution
-                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30"
-                  : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                    ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                    : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30",
               )}
             >
               {verdict.isReject ? (
@@ -157,9 +161,7 @@ export function DossierVisualizer({ markdown, title }: DossierVisualizerProps) {
               {verdict.recommendation}
             </span>
           </div>
-          <p className="text-sm font-medium text-foreground leading-snug">
-            {verdict.thesis}
-          </p>
+          <p className="text-sm font-medium text-foreground leading-snug">{verdict.thesis}</p>
         </div>
 
         {/* Conviction Meter */}
@@ -168,9 +170,7 @@ export function DossierVisualizer({ markdown, title }: DossierVisualizerProps) {
             <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Conviction Index
             </span>
-            <span className="text-xl font-extrabold text-foreground">
-              {verdict.conviction}%
-            </span>
+            <span className="text-xl font-extrabold text-foreground">{verdict.conviction}%</span>
           </div>
           <div className="relative size-10 flex items-center justify-center">
             <svg className="size-full -rotate-90" viewBox="0 0 36 36">
@@ -182,9 +182,7 @@ export function DossierVisualizer({ markdown, title }: DossierVisualizerProps) {
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
               <path
-                className={cn(
-                  verdict.conviction > 75 ? "text-emerald-500" : "text-amber-500"
-                )}
+                className={cn(verdict.conviction > 75 ? "text-emerald-500" : "text-amber-500")}
                 strokeDasharray={`${verdict.conviction}, 100`}
                 strokeWidth="3.5"
                 strokeLinecap="round"
@@ -222,7 +220,9 @@ export function DossierVisualizer({ markdown, title }: DossierVisualizerProps) {
                 Strategic Projection & Scenario Analysis
               </h4>
             </div>
-            <span className="text-[11px] text-muted-foreground">Baseline vs. Bull/Bear Scenarios</span>
+            <span className="text-[11px] text-muted-foreground">
+              Baseline vs. Bull/Bear Scenarios
+            </span>
           </div>
           <div className="h-56 w-full">
             {isMounted ? (
@@ -320,13 +320,17 @@ export function DossierVisualizer({ markdown, title }: DossierVisualizerProps) {
               <span className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
                 <span className="size-2 rounded-full bg-emerald-500" /> Bull Multiplier
               </span>
-              <span className="font-bold text-foreground">{scenarioProbabilities[0]?.probability}%</span>
+              <span className="font-bold text-foreground">
+                {scenarioProbabilities[0]?.probability}%
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 font-medium text-rose-600 dark:text-rose-400">
                 <span className="size-2 rounded-full bg-rose-500" /> Bear Downgrade
               </span>
-              <span className="font-bold text-foreground">{scenarioProbabilities[1]?.probability}%</span>
+              <span className="font-bold text-foreground">
+                {scenarioProbabilities[1]?.probability}%
+              </span>
             </div>
           </div>
         </div>

@@ -37,8 +37,9 @@ const SECTIONS = [
   { label: "Sources", search: "Sources" },
 ];
 
-function extractTablesToCSV(md: string): string {
-  const lines = md.split("\n");
+function extractTablesToCSV(md: string = ""): string {
+  const safeMd = typeof md === "string" ? md : "";
+  const lines = safeMd.split("\n");
   const csvRows: string[] = [];
   let inTable = false;
 
@@ -63,7 +64,7 @@ function extractTablesToCSV(md: string): string {
 
 export function ReportToolbar({
   title,
-  markdownContent,
+  markdownContent = "",
   sourcesCount = 0,
   isStreaming = false,
   viewMode = "dossier",
@@ -71,15 +72,16 @@ export function ReportToolbar({
   onOpenEvidence,
 }: ReportToolbarProps) {
   const [copied, setCopied] = useState(false);
+  const safeContent = typeof markdownContent === "string" ? markdownContent : "";
 
   // Word count and reading time
-  const words = markdownContent.trim().split(/\s+/).filter(Boolean).length;
+  const words = safeContent.trim().split(/\s+/).filter(Boolean).length;
   const readTime = Math.max(1, Math.round(words / 220));
 
   const handleCopy = useCallback(() => {
-    if (!markdownContent) return;
+    if (!safeContent) return;
     navigator.clipboard
-      .writeText(markdownContent)
+      .writeText(safeContent)
       .then(() => {
         setCopied(true);
         toast.success("Dossier copied to clipboard", {
@@ -93,14 +95,14 @@ export function ReportToolbar({
   }, [markdownContent]);
 
   const handleExportMarkdown = useCallback(() => {
-    if (!markdownContent) return;
+    if (!safeContent) return;
     const sanitizedTitle = (title || "Research_Dossier")
       .replace(/[^a-zA-Z0-9_-]/g, "_")
       .replace(/_+/g, "_")
       .slice(0, 40);
 
     const header = `---
-title: "${title.replace(/"/g, '\\"')}"
+title: "${(title || "Research Dossier").replace(/"/g, '\\"')}"
 date: "${new Date().toISOString()}"
 author: "Researchify AI Autonomous Intelligence Core"
 sources_consulted: ${sourcesCount}
@@ -110,7 +112,7 @@ classification: "Boardroom Strategic Dossier"
 
 `;
 
-    const blob = new Blob([header + markdownContent], { type: "text/markdown;charset=utf-8" });
+    const blob = new Blob([header + safeContent], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -122,11 +124,11 @@ classification: "Boardroom Strategic Dossier"
     toast.success("Markdown dossier downloaded", {
       description: `${sanitizedTitle}_Strategic_Dossier.md saved to your device.`,
     });
-  }, [markdownContent, title, sourcesCount, words]);
+  }, [safeContent, title, sourcesCount, words]);
 
   const handleExportCSV = useCallback(() => {
-    if (!markdownContent) return;
-    const csvData = extractTablesToCSV(markdownContent);
+    if (!safeContent) return;
+    const csvData = extractTablesToCSV(safeContent);
     if (!csvData || csvData.trim().length === 0) {
       toast.info("No data tables found in this section to export as CSV.");
       return;
@@ -149,14 +151,14 @@ classification: "Boardroom Strategic Dossier"
     toast.success("Financial & market CSV downloaded", {
       description: "Ready for Excel, Google Sheets, or financial models.",
     });
-  }, [markdownContent, title]);
+  }, [safeContent, title]);
 
   const handlePrint = useCallback(() => {
     const sanitizedTitle = (title || "Executive Strategic Dossier")
       .replace(/[^a-zA-Z0-9 _-]/g, "")
       .slice(0, 60);
 
-    const htmlBody = markdownContent
+    const htmlBody = safeContent
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -271,7 +273,7 @@ classification: "Boardroom Strategic Dossier"
   const scrollToSection = useCallback((search: string) => {
     const headings = Array.from(document.querySelectorAll("h1, h2, h3, blockquote, strong"));
     const match = headings.find((el) =>
-      el.textContent?.toLowerCase().includes(search.toLowerCase())
+      el.textContent?.toLowerCase().includes(search.toLowerCase()),
     );
     if (match) {
       match.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -293,7 +295,7 @@ classification: "Boardroom Strategic Dossier"
                   "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
                   viewMode === "dossier"
                     ? "bg-card text-foreground shadow-2xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <FileText className="size-3" />
@@ -306,7 +308,7 @@ classification: "Boardroom Strategic Dossier"
                   "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
                   viewMode === "memo"
                     ? "bg-card text-foreground shadow-2xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <Layers className="size-3" />
@@ -319,7 +321,7 @@ classification: "Boardroom Strategic Dossier"
                   "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
                   viewMode === "analytics"
                     ? "bg-card text-foreground shadow-2xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <BarChart3 className="size-3" />
@@ -341,7 +343,9 @@ classification: "Boardroom Strategic Dossier"
           ) : null}
 
           <span className="hidden sm:inline text-xs text-muted-foreground">•</span>
-          <span className="text-xs font-medium text-foreground">{words.toLocaleString()} words</span>
+          <span className="text-xs font-medium text-foreground">
+            {words.toLocaleString()} words
+          </span>
           <span className="hidden sm:inline text-xs text-muted-foreground">•</span>
           <span className="text-xs text-muted-foreground">{readTime} min read</span>
 
@@ -360,7 +364,11 @@ classification: "Boardroom Strategic Dossier"
             title="Copy full markdown dossier"
             className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-all duration-150 hover:border-accent hover:text-accent hover:shadow-xs cursor-pointer"
           >
-            {copied ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
+            {copied ? (
+              <Check className="size-3.5 text-emerald-500" />
+            ) : (
+              <Copy className="size-3.5" />
+            )}
             <span>{copied ? "Copied" : "Copy"}</span>
           </button>
 

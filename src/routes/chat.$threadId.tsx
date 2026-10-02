@@ -1,9 +1,10 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Plus, Trash2, KeyRound } from "lucide-react";
+import { Plus, Trash2, KeyRound, FolderOpen } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { ChatWindow } from "@/components/research/ChatWindow";
 import { ApiKeyModal } from "@/components/research/ApiKeyModal";
+import { DocumentLibraryModal } from "@/components/research/DocumentUpload";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import agentMark from "@/assets/agent-mark.png";
 import {
@@ -31,6 +32,21 @@ export const Route = createFileRoute("/chat/$threadId")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  errorComponent: ({ error, reset }) => (
+    <div className="flex h-screen w-screen items-center justify-center p-6 bg-background text-foreground">
+      <div className="max-w-md w-full rounded-2xl border border-border bg-card p-6 shadow-xl space-y-4 text-center">
+        <h2 className="text-lg font-bold">Research Session Restored</h2>
+        <p className="text-xs text-muted-foreground">{error?.message || "Connection was momentarily interrupted."}</p>
+        <button
+          type="button"
+          onClick={() => { reset(); window.location.reload(); }}
+          className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold text-xs hover:opacity-90 cursor-pointer shadow-2xs"
+        >
+          Resume Session
+        </button>
+      </div>
+    </div>
+  ),
   component: ChatPage,
 });
 
@@ -130,6 +146,23 @@ function ChatPage() {
           </div>
           <div className="flex items-center justify-between pt-1 border-t border-border/40">
             <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+              Documents
+            </span>
+            <DocumentLibraryModal
+              trigger={
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
+                >
+                  <FolderOpen className="size-3.5 text-accent" />
+                  <span>Library</span>
+                </button>
+              }
+              onSelectDoc={() => {}}
+            />
+          </div>
+          <div className="flex items-center justify-between pt-1 border-t border-border/40">
+            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
               Appearance
             </span>
             <ThemeToggle showLabel />
@@ -144,6 +177,18 @@ function ChatPage() {
             <span className="font-display text-lg leading-none font-semibold">Researchify AI</span>
           </div>
           <div className="flex items-center gap-2">
+            <DocumentLibraryModal
+              trigger={
+                <button
+                  type="button"
+                  aria-label="Documents"
+                  className="rounded-md border border-border p-1.5 text-muted-foreground hover:text-foreground"
+                >
+                  <FolderOpen className="size-4" />
+                </button>
+              }
+              onSelectDoc={() => {}}
+            />
             <ApiKeyModal
               trigger={
                 <button

@@ -18,7 +18,7 @@ export function ThemeToggle({
       onClick={toggleTheme}
       className={cn(
         "inline-flex items-center gap-2 rounded-lg border border-border/70 bg-card/60 px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-200 hover:border-border hover:bg-secondary hover:text-foreground shadow-2xs",
-        className
+        className,
       )}
       title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       aria-label="Toggle theme"
@@ -31,9 +31,7 @@ export function ThemeToggle({
         )}
       </div>
       {showLabel ? (
-        <span className="font-mono text-[11px] select-none">
-          {isDark ? "Dark" : "Light"}
-        </span>
+        <span className="font-mono text-[11px] select-none">{isDark ? "Dark" : "Light"}</span>
       ) : null}
     </button>
   );

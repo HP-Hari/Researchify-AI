@@ -39,12 +39,7 @@ interface EvidenceDrawerProps {
   activeCitation?: number | null;
 }
 
-export function EvidenceDrawer({
-  isOpen,
-  onClose,
-  sources,
-  activeCitation,
-}: EvidenceDrawerProps) {
+export function EvidenceDrawer({ isOpen, onClose, sources, activeCitation }: EvidenceDrawerProps) {
   const [selectedTier, setSelectedTier] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
@@ -99,7 +94,9 @@ export function EvidenceDrawer({
               <ShieldCheck className="size-4 text-emerald-500" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-foreground">Grounding & Evidence Drawer</h2>
+              <h2 className="text-base font-semibold text-foreground">
+                Grounding & Evidence Drawer
+              </h2>
               <p className="text-xs text-muted-foreground">
                 {sources.length} verified empirical sources backing this dossier
               </p>
@@ -136,7 +133,7 @@ export function EvidenceDrawer({
                 "rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
                 selectedTier === "all"
                   ? "bg-primary text-primary-foreground"
-                  : "border border-border bg-secondary/50 text-muted-foreground hover:text-foreground"
+                  : "border border-border bg-secondary/50 text-muted-foreground hover:text-foreground",
               )}
             >
               All Sources ({tierCounts.all})
@@ -148,7 +145,7 @@ export function EvidenceDrawer({
                 "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
                 selectedTier === "tier1"
                   ? "bg-emerald-600 text-white"
-                  : "border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
+                  : "border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20",
               )}
             >
               <GraduationCap className="size-3" />
@@ -161,7 +158,7 @@ export function EvidenceDrawer({
                 "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
                 selectedTier === "tier2"
                   ? "bg-blue-600 text-white"
-                  : "border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20"
+                  : "border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20",
               )}
             >
               <Building2 className="size-3" />
@@ -174,7 +171,7 @@ export function EvidenceDrawer({
                 "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
                 selectedTier === "tier3"
                   ? "bg-purple-600 text-white"
-                  : "border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20"
+                  : "border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20",
               )}
             >
               <Newspaper className="size-3" />
@@ -202,7 +199,7 @@ export function EvidenceDrawer({
                     "group relative rounded-xl border p-4 transition-all duration-200",
                     isHighlighted
                       ? "border-accent ring-2 ring-accent/30 bg-accent/5"
-                      : "border-border/80 bg-card hover:border-border hover:shadow-xs"
+                      : "border-border/80 bg-card hover:border-border hover:shadow-xs",
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -216,8 +213,8 @@ export function EvidenceDrawer({
                           isTier1
                             ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
                             : isTier2
-                            ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/30"
-                            : "bg-muted text-muted-foreground border border-border"
+                              ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/30"
+                              : "bg-muted text-muted-foreground border border-border",
                         )}
                       >
                         {source.tierLabel || "Verified Source"}

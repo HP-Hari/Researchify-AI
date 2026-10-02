@@ -5,18 +5,20 @@ type Hit = { title?: string; url?: string; snippet?: string };
 export function SearchResults({
   output,
 }: {
-  output: {
-    query?: string;
-    purpose?: string;
-    results?: Hit[];
-    error?: string;
-    diminishingReturnsAlert?: {
-      triggered: boolean;
-      consecutiveRedundantSearches: number;
-      semanticSimilarity: string;
-      systemDirective?: string;
-    };
-  } | undefined;
+  output:
+    | {
+        query?: string;
+        purpose?: string;
+        results?: Hit[];
+        error?: string;
+        diminishingReturnsAlert?: {
+          triggered: boolean;
+          consecutiveRedundantSearches: number;
+          semanticSimilarity: string;
+          systemDirective?: string;
+        };
+      }
+    | undefined;
 }) {
   if (!output) return null;
 
@@ -32,10 +34,14 @@ export function SearchResults({
         <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-2.5 text-xs text-amber-700 dark:text-amber-300 space-y-1">
           <div className="flex items-center gap-1.5 font-semibold">
             <AlertCircle className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-            <span>Diminishing Returns Threshold Triggered ({output.diminishingReturnsAlert.semanticSimilarity} overlap)</span>
+            <span>
+              Diminishing Returns Threshold Triggered (
+              {output.diminishingReturnsAlert.semanticSimilarity} overlap)
+            </span>
           </div>
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            3 consecutive queries yielded &gt;85% redundancy. Search loop halted to prevent circular polling. Transitioning directly to synthesis.
+            3 consecutive queries yielded &gt;85% redundancy. Search loop halted to prevent circular
+            polling. Transitioning directly to synthesis.
           </p>
         </div>
       ) : null}
@@ -99,11 +105,7 @@ export function PageRead({
   );
 }
 
-export function FinancialCalcResult({
-  output,
-}: {
-  output: any;
-}) {
+export function FinancialCalcResult({ output }: { output: any }) {
   if (!output) return null;
   return (
     <div className="rounded-lg bg-muted/40 p-3 text-xs space-y-1.5 font-mono">
@@ -115,16 +117,17 @@ export function FinancialCalcResult({
           </span>
         ) : null}
       </div>
-      {output.formula ? (
-        <p className="text-muted-foreground">Formula: {output.formula}</p>
-      ) : null}
+      {output.formula ? <p className="text-muted-foreground">Formula: {output.formula}</p> : null}
       {output.grossMargin ? (
         <div className="grid grid-cols-2 gap-2 pt-1 border-t border-border/40">
-          <div>Gross Margin: <strong className="text-foreground">{output.grossMargin}</strong></div>
-          <div>Gross Profit: <strong className="text-foreground">${output.grossProfit}</strong></div>
+          <div>
+            Gross Margin: <strong className="text-foreground">{output.grossMargin}</strong>
+          </div>
+          <div>
+            Gross Profit: <strong className="text-foreground">${output.grossProfit}</strong>
+          </div>
         </div>
       ) : null}
     </div>
   );
 }
-

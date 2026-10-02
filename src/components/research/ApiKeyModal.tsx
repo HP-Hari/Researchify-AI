@@ -51,7 +51,8 @@ export function ApiKeyModal({
 
     if (!trimmed.startsWith("AIza") && !trimmed.startsWith("sk-") && !trimmed.startsWith("AQ.")) {
       toast.error("Invalid API Key format", {
-        description: "Google Gemini keys start with 'AIzaSy...'. OpenAI/OpenRouter keys start with 'sk-'.",
+        description:
+          "Google Gemini keys start with 'AIzaSy...'. OpenAI/OpenRouter keys start with 'sk-'.",
       });
       return;
     }
@@ -83,7 +84,8 @@ export function ApiKeyModal({
             <DialogTitle>Configure Research API Key</DialogTitle>
           </div>
           <DialogDescription className="text-xs">
-            Connect your own LLM API key for live web searching, deep crawling, and real-time report synthesis.
+            Connect your own LLM API key for live web searching, deep crawling, and real-time report
+            synthesis.
           </DialogDescription>
         </DialogHeader>
 
@@ -102,10 +104,14 @@ export function ApiKeyModal({
                 </a>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Keys begin with <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">AIzaSy...</code>.
+                Keys begin with{" "}
+                <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">
+                  AIzaSy...
+                </code>
+                .
               </p>
             </div>
-            
+
             <div className="border-t border-border/50 pt-2">
               <div className="flex items-center justify-between font-medium mb-1.5">
                 <span>OpenRouter API Key (Alternative)</span>
@@ -119,7 +125,11 @@ export function ApiKeyModal({
                 </a>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Keys begin with <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">sk-or-v1-</code>.
+                Keys begin with{" "}
+                <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">
+                  sk-or-v1-
+                </code>
+                .
               </p>
             </div>
           </div>
@@ -154,7 +164,9 @@ export function ApiKeyModal({
                 <Trash2 className="size-3.5" />
                 Remove Key
               </button>
-            ) : <div />}
+            ) : (
+              <div />
+            )}
 
             <div className="flex items-center gap-2">
               <button

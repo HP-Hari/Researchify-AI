@@ -27,6 +27,10 @@ lerna-debug.log*
 !.env.example
 *.local
 
+# Uploaded test documents
+public/uploads/*.pdf
+!public/uploads/.gitkeep
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

@@ -18,7 +18,8 @@ export function newThreadId() {
 export function loadThreads(): ResearchThread[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY);
+    const raw =
+      window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as ResearchThread[];
     if (!Array.isArray(parsed)) return [];
@@ -65,7 +66,8 @@ export function saveThreadMessages(id: string, messages: UIMessage[]) {
   const index = threads.findIndex((thread) => thread.id === id);
   const title = deriveTitle(messages) ?? threads[index]?.title ?? "New research";
   const updated: ResearchThread = { id, title, updatedAt: Date.now(), messages };
-  const next = index === -1 ? [updated, ...threads] : threads.map((t) => (t.id === id ? updated : t));
+  const next =
+    index === -1 ? [updated, ...threads] : threads.map((t) => (t.id === id ? updated : t));
   persist(next.sort((a, b) => b.updatedAt - a.updatedAt));
   return next;
 }

@@ -25,32 +25,35 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
   const memoData = useMemo(() => {
     // Recommendation & Conviction
     const recMatch = markdown.match(
-      /(?:Strategic Recommendation|Recommendation):\s*\*?\*?([A-Z\s/]+)\*?\*?/i
+      /(?:Strategic Recommendation|Recommendation):\s*\*?\*?([A-Z\s/]+)\*?\*?/i,
     );
     const convictionMatch = markdown.match(
-      /(?:Conviction Index|Confidence|Conviction):\s*\*?\*?(\d{1,3})%?\*?\*?/i
+      /(?:Conviction Index|Confidence|Conviction):\s*\*?\*?(\d{1,3})%?\*?\*?/i,
     );
-    const thesisMatch = markdown.match(
-      /(?:Core Thesis|Thesis):\s*\*?\*?([^\n\r*]+)/i
-    );
+    const thesisMatch = markdown.match(/(?:Core Thesis|Thesis):\s*\*?\*?([^\n\r*]+)/i);
     const fatalMatch = markdown.match(
-      /(?:Fatal Vulnerability|Fatal Risk|Black Swan):\s*\*?\*?([^\n\r*]+)/i
+      /(?:Fatal Vulnerability|Fatal Risk|Black Swan):\s*\*?\*?([^\n\r*]+)/i,
     );
 
     // BLUF
     const blufMatch = markdown.match(
-      /(?:###\s*(?:1\.\s*)?Executive Summary[^\n]*)([\s\S]*?)(?:###|$)/i
+      /(?:###\s*(?:1\.\s*)?Executive Summary[^\n]*)([\s\S]*?)(?:###|$)/i,
     );
 
     // Strategic Decision Framework & Action Gates
     const frameworkMatch =
-      markdown.match(/(?:###\s*(?:7\.\s*)?Strategic Decision Framework[^\n]*)([\s\S]*?)(?:###|$)/i) ||
-      markdown.match(/(?:###\s*(?:7\.\s*)?Actionable 30-60-90[^\n]*)([\s\S]*?)(?:###|$)/i);
+      markdown.match(
+        /(?:###\s*(?:7\.\s*)?Strategic Decision Framework[^\n]*)([\s\S]*?)(?:###|$)/i,
+      ) || markdown.match(/(?:###\s*(?:7\.\s*)?Actionable 30-60-90[^\n]*)([\s\S]*?)(?:###|$)/i);
 
     const recommendation = recMatch ? recMatch[1]?.trim() : "PROCEED WITH CONDITIONS";
     const conviction = convictionMatch ? convictionMatch[1]?.trim() : "82";
-    const thesis = thesisMatch ? thesisMatch[1]?.trim() : "Empirical analysis supports strategic upside with bounded risks.";
-    const fatalRisk = fatalMatch ? fatalMatch[1]?.trim() : "Regulatory shifts or unexpected infrastructure bottlenecks.";
+    const thesis = thesisMatch
+      ? thesisMatch[1]?.trim()
+      : "Empirical analysis supports strategic upside with bounded risks.";
+    const fatalRisk = fatalMatch
+      ? fatalMatch[1]?.trim()
+      : "Regulatory shifts or unexpected infrastructure bottlenecks.";
 
     const blufText = blufMatch
       ? blufMatch[1]?.trim().replace(/^>\s*/gm, "").slice(0, 500)
@@ -70,9 +73,21 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
 
     if (decisionPillars.length === 0) {
       decisionPillars.push(
-        { title: "Go / No-Go Decision Triggers", detail: "Empirical proof of unit economic margin thresholds and regulatory non-interference." },
-        { title: "Downside Hedging & Capital Insulation", detail: "Structured pilot contracts, dual-vendor sourcing, and strict capital draw-down gates." },
-        { title: "Resource Allocation Priorities", detail: "Prioritize proprietary data pipelines, tier-1 compliance certifications, and key partner moats." }
+        {
+          title: "Go / No-Go Decision Triggers",
+          detail:
+            "Empirical proof of unit economic margin thresholds and regulatory non-interference.",
+        },
+        {
+          title: "Downside Hedging & Capital Insulation",
+          detail:
+            "Structured pilot contracts, dual-vendor sourcing, and strict capital draw-down gates.",
+        },
+        {
+          title: "Resource Allocation Priorities",
+          detail:
+            "Prioritize proprietary data pipelines, tier-1 compliance certifications, and key partner moats.",
+        },
       );
     }
 
@@ -122,9 +137,7 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
               {memoData.recommendation}
             </span>
           </div>
-          <p className="text-sm font-semibold text-foreground leading-relaxed">
-            {memoData.thesis}
-          </p>
+          <p className="text-sm font-semibold text-foreground leading-relaxed">{memoData.thesis}</p>
         </div>
 
         <div className="flex flex-col justify-between rounded-xl border border-border/80 bg-muted/20 p-4">
@@ -135,9 +148,7 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
             <span className="text-3xl font-black text-foreground">{memoData.conviction}%</span>
             <span className="text-xs text-muted-foreground">confidence</span>
           </div>
-          <span className="text-[11px] text-muted-foreground">
-            Empirically cross-validated
-          </span>
+          <span className="text-[11px] text-muted-foreground">Empirically cross-validated</span>
         </div>
       </div>
 
@@ -177,9 +188,7 @@ export function ExecutiveMemoView({ title, markdown, onOpenFullDossier }: Execut
               <span className="inline-block rounded-md bg-secondary px-2 py-0.5 font-mono text-[10px] font-bold text-foreground">
                 {item.title}
               </span>
-              <p className="text-xs text-foreground font-medium leading-relaxed">
-                {item.detail}
-              </p>
+              <p className="text-xs text-foreground font-medium leading-relaxed">{item.detail}</p>
             </div>
           ))}
         </div>
